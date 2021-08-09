@@ -1,0 +1,133 @@
+﻿/*
+In NativeScript, the app.css file is where you place CSS rules that
+you would like to apply to your entire application. Check out
+http://docs.nativescript.org/ui/styling for a full list of the CSS
+selectors and properties you can use to style UI components.
+
+/*
+In many cases you may want to use the NativeScript core theme instead
+of writing your own CSS rules. For a full list of class names in the theme
+refer to http://docs.nativescript.org/ui/theme. 
+The imported CSS rules must precede all other types of rules.
+*/
+@import '@nativescript/theme/css/core.css';
+// @import '@nativescript/theme/css/default.css';
+
+@tailwind components;
+@tailwind utilities;
+
+@import './font-awesome.css';
+
+.ns-root {
+    --red:theme('colors.red.DEFAULT');
+    --yellow:theme('colors.yellow.DEFAULT');
+
+    --page:theme('colors.page');
+    --dark: theme('colors.dark');
+
+    --orange:theme('colors.orange.500');
+    --green:theme('colors.green.500');
+    --gray: theme('colors.gray.500');
+    --gray-50:theme('colors.gray.50');
+    --gray-100:theme('colors.gray.100');
+    --gray-200:theme('colors.gray.200');
+    --gray-300:theme('colors.gray.300');
+    --gray-400:theme('colors.gray.400');
+    --gray-500:theme('colors.gray.500');
+    --gray-600:theme('colors.gray.600');
+    --gray-700:theme('colors.gray.700');
+    --gray-800:theme('colors.gray.800');
+    --gray-900:theme('colors.gray.900');
+    --blue: theme('colors.blue.500');
+}
+
+
+.page {
+    color: var(--darkish);
+    background: var(--page);
+}
+
+
+.btn {
+    font-size: 18;
+}
+.bottombtn {
+    height:auto;
+    padding:18;
+    text-align:center;
+    margin:0;
+    font-size:18;
+    width:100%;
+}
+
+
+.switch {
+    color: var(--gray-300);
+    off-background-color:var(--gray-300);
+    background-color:var(--green);
+}
+.switch[checked=true]{
+    color: var(--green);
+}
+
+.icon {
+    font-family: 'Material-Design-Iconic-Font';
+}
+
+actionbar .icon {
+    font-size: 20;
+}
+
+actionbar .title {
+    font-size: 16;
+    margin-left: 20;
+}
+
+actionbar {
+    background-color: white;
+    margin-top:-22;  //needed for systemwindowfits to work see https://stackoverflow.com/questions/57394233/fitssystemwindows-pushes-action-bar-down-nativescript-android-9-0
+}
+
+/* https://github.com/NativeScript/theme/issues/151 */
+.flatBtn {
+    android-elevation: 0;
+    /* border-radius: 20; */
+}
+
+.input {
+ font-size:16       
+}
+
+.spinner {
+background-color: rgba(255, 233, 176, 0.2);
+height: 200;
+width: 200;
+
+animation-name: rotate;
+animation-duration: 2s;
+animation-iteration-count: infinite;
+animation-timing-function: linear;
+
+clip-path: circle(60% at 50% 50%);
+margin: 20;
+}
+
+.spinner-label {
+height: 100;
+width: 100;
+background-color: #ffe9b0;
+}
+
+.inner-circle {
+height: 100;
+width: 100;
+background-color: #0dc5c1;
+border-radius: 50%;
+top: 50;
+left: 50;
+}
+
+@keyframes rotate {
+from { transform: rotate(0deg); }
+to {transform: rotate(360deg); }
+}

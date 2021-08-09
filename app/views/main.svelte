@@ -1,0 +1,97 @@
+<page actionBarHidden="true">
+    <scrollView  height="100%" width="100%">
+            {#await loadingPromise}
+                <flexboxLayout class="page ns-light p-2" height="100%" alignItems="center" justifyContent="center" flexDirection="column">
+                <activityIndicator busy="true" horizontalAlignment="center" verticalAlignment="center" height="25%" width="25%" />
+                </flexboxLayout>
+            {:then}
+            <stackLayout class="page ns-light" height="100%" paddingTop="{statusBarHeight}px">
+                {#if $user_profile}
+                <label textWrap="true" class="text-md" text="Eingeloggt als {$user_profile.username}." />
+                {/if}
+                <!-- https://ajax.systems/de/blog/ajax-alerts/ -->
+                <label textWrap="true" class="text-md" text="Um keine Benachrichtigungen im Modus Nicht stören zu verpassen, wenn nur wichtige Benachrichtigungen angezeigt werden sollen, muss die Option „Nicht stören“ ignorieren eingeschaltet werden." />
+                <button text="Logout now" class="text-md bg-white text-green border-0 border-white flatBtn mt-4" on:tap="{doLogout}" />
+            </stackLayout>
+            {/await}
+    </scrollView>
+</page>
+
+<script>
+    import { user_token, user_profile,logout } from '../store/user'
+    import {getStatusbarHeight} from '~/utils/helpers'
+    import { onMount } from 'svelte'
+    import { firebase } from "@nativescript/firebase";
+    import { client } from '~/lib/client'
+    import { Device } from '@nativescript/core';
+    import AlarmPage from './alarm/index.svelte';
+    import Login from './login.svelte';
+    import { navigate } from 'svelte-native'
+    import { Toasty,ToastDuration } from "@triniwiz/nativescript-toasty"
+
+    let statusBarHeight=0;
+    let loadingPromise = Promise.resolve([]);
+
+    function doLogout() {
+        logout();
+        navigate(
+            { page: Login }
+        );
+    }
+
+    onMount(async ()=>{
+        loadingPromise = new Promise(resolve => setTimeout(resolve, 500));
+        statusBarHeight = getStatusbarHeight();
+        console.log("starting app with ", $user_profile, $user_token);
+        if (!$user_profile) {
+            console.log("load user profile");
+            await user_profile.loadUserFromToken();
+            console.log("profile loaded from server:", $user_profile);
+        }
+
+        firebase.init({
+            showNotifications: true,
+            showNotificationsWhenInForeground: true,
+
+            onPushTokenReceivedCallback: async (fcmToken) => {
+                    console.log('[Firebase] onPushTokenReceivedCallback:', { fcmToken });
+                    await registerOrUpdateToken(fcmToken);
+            },
+        })
+        .then(() => {
+            console.log('[Firebase] Initialized');
+            firebase.addOnMessageReceivedCallback((message) => {
+                console.log('[Firebase] onMessageReceivedCallback:', { message });
+                if(message.foreground) {
+                    navigate({ page: AlarmPage,props:{id:message.data.id,template:JSON.parse(message.data.template)} });
+                }
+            })
+        })
+        .catch(error => {
+            console.log('[Firebase] Initialize', { error });
+        });
+    })
+
+
+     async function registerOrUpdateToken(newfcmToken){
+        try {
+                const uuid = Device.uuid;
+                
+
+                if($user_profile.fcmToken!=newfcmToken){
+                    console.log(`update old token ${$user_profile.fcmToken} with new token ${newfcmToken}`);
+                    await client.put(`/users/${$user_profile.id}`,{
+                            fcmToken:newfcmToken
+                    });
+                }
+            } catch (err) {
+                const toast = new Toasty({ text: `Fehler: "${err}"` }).setToastDuration(ToastDuration.LONG);
+                toast.show();
+            }
+     }
+
+</script>
+
+<style>
+    
+</style>
