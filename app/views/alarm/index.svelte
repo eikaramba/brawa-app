@@ -17,7 +17,11 @@
             
             <htmlView html={template.callToAction_text} />
 
-            <button text="{template.callToAction_button}" on:tap="{next}" class="btn bg-green" marginTop="20"/>
+            {#if template.nfc_nutzen}
+                <label textWrap="true" class="text-md" text="Bitte scan den NFC Tag um fortzufahren" />
+            {:else}
+                <button text="{template.callToAction_button}" on:tap="{next}" class="btn bg-green" marginTop="20"/>
+            {/if}
 
         </stackLayout>
     </scrollView>
@@ -31,6 +35,8 @@
     import { client } from './../../lib/client'
     import { navigate } from 'svelte-native'
     import ConfirmedPage from './confirmed.svelte'
+    import {Nfc} from "nativescript-nfc"
+
 
     let statusBarHeight=0;
     export let id;
@@ -47,6 +53,24 @@
             console.log(template.modules)
         } catch (err) {
             console.error("could not load template data from backend. ", err)
+        }
+
+        if(template.nfc_nutzen){
+
+            var nfc = new Nfc();
+            const nfcAvailable = nfc.available();
+            const nfcEnabled = nfc.enabled();
+            
+            if(nfcAvailable && nfcEnabled){
+                nfc
+                .setOnNdefDiscoveredListener(function (data) {
+                    console.log("got nfc",data);
+                    navigate({ page: ConfirmedPage,props:{id,template} });
+                })
+                .then(function () {
+                    console.log("OnNdefDiscovered listener added");
+                });
+            }
         }
 
     })
