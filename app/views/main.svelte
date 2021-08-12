@@ -62,9 +62,9 @@
             console.log('[Firebase] Initialized');
             firebase.addOnMessageReceivedCallback((message) => {
                 console.log('[Firebase] onMessageReceivedCallback:', { message });
-                if(message.foreground) {
+                // if(message.foreground) {
                     navigate({ page: AlarmPage,props:{id:message.data.id,template:JSON.parse(message.data.template)} });
-                }
+                // }
             })
         })
         .catch(error => {

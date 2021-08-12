@@ -59,25 +59,29 @@ if (isAndroid) {
       }
     );
 
+    // import { Observable, Frame } from '@nativescript/core';
+    // Frame.topmost().navigate({
+    //   moduleName: `plugin-demos/${args.object.text}`,
+    // });
     // Activity Started (app started/booted)
-    Application.android.on(
-      AndroidApplication.activityResumedEvent,
-      (args: any) => {
-        if (args.activity) {
-          let extras = args.activity.getIntent().getExtras();
-          console.log("!!!!!!!!!!!!!!!!!!!extras:",extras);
-          if(extras) {
-            let id = JSON.parse(extras.getString("id"));
-            let template = JSON.parse(extras.getString("template"));
-            console.log("id is " + id);
-            navigate(
-                              { page: AlarmPage, props:{id,template} }
-                          )
-          }
-        }
-        console.log("Event: " + args.eventName + ", Activity: " + args.activity);
-      }
-    );
+    // Application.android.on(
+    //   AndroidApplication.activityResumedEvent,
+    //   (args: any) => {
+    //     if (args.activity) {
+    //       let extras = args.activity.getIntent().getExtras();
+    //       console.log("!!!!!!!!!!!!!!!!!!!extras:",extras);
+    //       if(extras) {
+    //         let id = JSON.parse(extras.getString("id"));
+    //         let template = JSON.parse(extras.getString("template"));
+    //         console.log("id is " + id);
+    //         navigate(
+    //                           { page: AlarmPage, props:{id,template} }
+    //                       )
+    //       }
+    //     }
+    //     console.log("Event: " + args.eventName + ", Activity: " + args.activity);
+    //   }
+    // );
   } catch (e) {
     console.log('Error setting up Android Events', e);
   }
