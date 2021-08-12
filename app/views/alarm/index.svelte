@@ -65,11 +65,14 @@
                 nfc
                 .setOnNdefDiscoveredListener(function (data) {
                     console.log("got nfc",data);
+                    // nfc.setOnNdefDiscoveredListener(null);
                     navigate({ page: ConfirmedPage,props:{id,template} });
                 })
                 .then(function () {
                     console.log("OnNdefDiscovered listener added");
                 });
+            }else{
+                template.nfc_nutzen = false;
             }
         }
 
