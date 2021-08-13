@@ -5,30 +5,62 @@
             {#each module.components as component,c}
                 {#if component.__component=='components.question'}
                     <label textWrap="true" class="text-md" text="{component.question}" />
-                    {#each component.answers as answer,a}
-                    <stackLayout
-                        orientation="horizontal"
-                        class="mb-2"
-                        on:tap={() => selectAnswer(c,a)}
-                    >
-                        <label
-                        verticalAlignment="center"
-                        textWrap="true"
-                        text={answer.selected
-                            ? String.fromCharCode(0xf14a)
-                            : String.fromCharCode(0xf0c8)}
-                        class="text-lg text-green ml-1 {answer.selected
-                            ? 'fas'
-                            : 'far'}"
-                        />
-                        <label
-                        verticalAlignment="center"
-                        textWrap="true"
-                        class="text-glue text-md ml-3"
-                        text={answer.label}
-                        />
-                    </stackLayout>
-                    {/each}
+                    {#if component.isRanking}
+                        <scrollView width="100%" orientation="horizontal">
+                        <flexboxLayout class="py-2" backgroundColor="#eee" justifyContent="center" width="{component.answers.length>5?`${100+(component.answers.length-5)*20}%`:'100%'}">
+                            {#each component.answers as answer,a}
+                            <stackLayout
+                                    orientation="vertical"
+                                    flexGrow="1"
+                                    class="px-1"
+                                    on:tap={() => selectAnswer(c,a)}
+                                >
+                                    <label
+                                    horizontalAlignment="center"
+                                    textWrap="true"
+                                    text={answer.selected
+                                        ? String.fromCharCode(0xf058)
+                                        : String.fromCharCode(0xf111)}
+                                    class="text-lg text-green {answer.selected
+                                        ? 'fas'
+                                        : 'far'}"
+                                    />
+                                    <label
+                                    verticalAlignment="center"
+                                    textWrap="true"
+                                    class="text-xs text-center"
+                                    text={answer.label}
+                                    />
+                                </stackLayout>
+                            {/each}
+                        </flexboxLayout>
+                        </scrollView>
+                    {:else}
+                        {#each component.answers as answer,a}
+                                <stackLayout
+                                    orientation="horizontal"
+                                    class="mb-2"
+                                    on:tap={() => selectAnswer(c,a)}
+                                >
+                                    <label
+                                    verticalAlignment="center"
+                                    textWrap="true"
+                                    text={answer.selected
+                                        ? String.fromCharCode(0xf14a)
+                                        : String.fromCharCode(0xf0c8)}
+                                    class="text-lg text-green ml-1 {answer.selected
+                                        ? 'fas'
+                                        : 'far'}"
+                                    />
+                                    <label
+                                    verticalAlignment="center"
+                                    textWrap="true"
+                                    class="text-md ml-3"
+                                    text={answer.label}
+                                    />
+                                </stackLayout>
+                        {/each}
+                    {/if}
                 {:else if component.__component=='components.textarea'}
                     <htmlView html="{component.text}" />
                 {:else if component.__component=='components.textfield'}
@@ -93,8 +125,8 @@
             }
             console.log(results);
 
-            if(results.length>0)
-            await client.post(`/alarms/${id}/moduleResults/${moduleStep}`,{moduleId:module.id,submitted_at:new Date(),results});
+            // if(results.length>0)
+            // await client.post(`/alarms/${id}/moduleResults/${moduleStep}`,{moduleId:module.id,submitted_at:new Date(),results});
     
             navigate({ page: NextModule, props:{id,template,moduleStep:moduleStep+1} });
 

@@ -7,6 +7,7 @@ purpose of the file is to pass control to the app’s first module.
 import { svelteNative } from "svelte-native";
 import Home from  "./views/main.svelte";
 import Login from  "./views/login.svelte";
+import Module from  "./views/alarm/module.svelte";
 import AlarmPage from './views/alarm/index.svelte';
 import Theme from "@nativescript/theme";
 
@@ -92,9 +93,49 @@ registerNativeViewElement("svgimage", () => require('@sergeymell/nativescript-sv
 
 Theme.setMode(Theme.Light);
 
-if (!get(user_token)) {
-    svelteNative(Login, {});
-}else{
-    svelteNative(Home, {});
-}
+svelteNative(Module, {
+
+    id:0,
+    moduleStep:0,
+    template:
+      {
+        modules:[
+          {
+            components: [
+              {
+                __component: 'components.question',
+                isRanking:true,
+                question:"Ich bin der klügste im ganzen raum",
+                answers: [
+                  {
+                    label: 'Ich stimme vollkommen zu'
+                  },
+                  {
+                    label: 'Ich stimme in Teilen zu'
+                  },
+                  {
+                    label: 'Ich stimme bedingt zu'
+                  },
+                  {
+                    label: 'Ich stimme meistens nicht zu'
+                  },
+                  {
+                    label: 'Ich stimme generell nicht zu'
+                  },
+                  {
+                    label: 'Ich stimme gar nicht zu'
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+});
+
+// if (!get(user_token)) {
+//     svelteNative(Login, {});
+// }else{
+//     svelteNative(Home, {});
+// }
 
