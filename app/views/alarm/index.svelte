@@ -41,6 +41,7 @@
     let statusBarHeight=0;
     export let id;
     export let template;
+    let nextPageProps = {};
 
     onMount(async ()=>{
         statusBarHeight = getStatusbarHeight();
@@ -54,6 +55,18 @@
         } catch (err) {
             console.error("could not load template data from backend. ", err)
         }
+        nextPageProps = {id,template};
+
+        if(template.randomisierte_module) {
+            // randomize modules and put the list as integers into an array
+            let randomArray = [];
+            for (let i = 0; i < template.modules.length; i++) {
+                randomArray.push(i);
+            }
+            // shuffle the array
+            shuffle(randomArray);
+            nextPageProps.moduleSteps = randomArray;
+        }
 
         if(template.nfc_nutzen){
 
@@ -66,7 +79,7 @@
                 .setOnNdefDiscoveredListener(function (data) {
                     console.log("got nfc",data);
                     // nfc.setOnNdefDiscoveredListener(null);
-                    navigate({ page: ConfirmedPage,props:{id,template} });
+                    navigate({ page: ConfirmedPage,props:nextPageProps });
                 })
                 .then(function () {
                     console.log("OnNdefDiscovered listener added");
@@ -79,7 +92,7 @@
     })
     function next(){
         try {
-            navigate({ page: ConfirmedPage,props:{id,template} });
+            navigate({ page: ConfirmedPage,props:nextPageProps });
         } catch (err) {
             console.error(err);
         }

@@ -80,7 +80,6 @@
 
 
 <script>
-    import { user_profile } from '../../store/user'
     import {getStatusbarHeight} from '~/utils/helpers'
     import { onMount } from 'svelte'
     import { client } from './../../lib/client'
@@ -90,8 +89,9 @@
     let statusBarHeight=0;
     export let id;
     export let moduleStep;
+    export let moduleSteps;
     export let template;
-    let module = template.modules[moduleStep];
+    let module = moduleSteps? template.modules[moduleSteps[moduleStep]]: template.modules[moduleStep];
 
     onMount(async ()=>{
         statusBarHeight = getStatusbarHeight();
@@ -125,10 +125,10 @@
             }
             console.log(results);
 
-            // if(results.length>0)
-            // await client.post(`/alarms/${id}/moduleResults/${moduleStep}`,{moduleId:module.id,submitted_at:new Date(),results});
+            if(results.length>0)
+            await client.post(`/alarms/${id}/moduleResults/${moduleStep}`,{moduleId:module.id,submitted_at:new Date(),results});
     
-            navigate({ page: NextModule, props:{id,template,moduleStep:moduleStep+1} });
+            navigate({ page: NextModule, props:{id,template,moduleStep:moduleStep+1,moduleSteps} });
 
     }
 

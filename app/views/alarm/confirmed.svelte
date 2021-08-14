@@ -24,6 +24,7 @@
     let statusBarHeight=0;
     export let id;
     export let template;
+    export let moduleSteps;
 
     onMount(async ()=>{
         statusBarHeight = getStatusbarHeight();
@@ -31,6 +32,6 @@
 
     })
     function next(){
-        navigate({ page: FirstModule, props:{id,template,moduleStep:0} });
+        navigate({ page: FirstModule, props:{id,template,moduleStep:0,moduleSteps} });
     }
 </script>
