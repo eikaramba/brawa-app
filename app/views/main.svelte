@@ -25,9 +25,11 @@
     import { client } from '~/lib/client'
     import { Device } from '@nativescript/core';
     import AlarmPage from './alarm/index.svelte';
+    import ReminderPage from './reminder.svelte';
     import Login from './login.svelte';
     import { navigate } from 'svelte-native'
     import { Toasty,ToastDuration } from "@triniwiz/nativescript-toasty"
+    
 
     let statusBarHeight=0;
     let loadingPromise = Promise.resolve([]);
@@ -61,10 +63,13 @@
         .then(() => {
             console.log('[Firebase] Initialized');
             firebase.addOnMessageReceivedCallback((message) => {
+                const template = JSON.parse(message.data.template);
                 console.log('[Firebase] onMessageReceivedCallback:', { message });
-                // if(message.foreground) {
-                    navigate({ page: AlarmPage,props:{id:message.data.id,template:JSON.parse(message.data.template)} });
-                // }
+                if(template.reminder) {
+                    navigate({ page: ReminderPage,props:{id:message.data.id,template} });
+                }else{
+                    navigate({ page: AlarmPage,props:{id:message.data.id,template} });
+                }
             })
         })
         .catch(error => {

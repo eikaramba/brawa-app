@@ -19,7 +19,7 @@ export function createAndroidNotificationChannel(channel: {
   id: string;
   name: string;
   description: string;
-  soundFilename: string;
+  soundFilename?: string;
 }) {
   const ANDROID_OREO_SDK_VERSION = 26;
   if (

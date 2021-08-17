@@ -52,10 +52,15 @@ if (isAndroid) {
       AndroidApplication.activityCreatedEvent,
       (args: any) => {
         createAndroidNotificationChannel({
-          id: "channelId_01",
+          id: "alarme",
           name: "Alarme",
-          description: "Standard Alarm",
+          description: "Wird ausgelöst bei potentielle Brandgefahren",
           soundFilename: "alarm2", //  filename (without the extension)
+        });
+        createAndroidNotificationChannel({
+          id: "reminder",
+          name: "Erinnerungen",
+          description: "Zur Erinnerung an die Funktionsweise der App"
         });
       }
     );
@@ -93,49 +98,49 @@ registerNativeViewElement("svgimage", () => require('@sergeymell/nativescript-sv
 
 Theme.setMode(Theme.Light);
 
-svelteNative(Module, {
+// svelteNative(Module, {
 
-    id:0,
-    moduleStep:0,
-    template:
-      {
-        modules:[
-          {
-            components: [
-              {
-                __component: 'components.question',
-                isRanking:true,
-                question:"Ich bin der klügste im ganzen raum",
-                answers: [
-                  {
-                    label: 'Ich stimme vollkommen zu'
-                  },
-                  {
-                    label: 'Ich stimme in Teilen zu'
-                  },
-                  {
-                    label: 'Ich stimme bedingt zu'
-                  },
-                  {
-                    label: 'Ich stimme meistens nicht zu'
-                  },
-                  {
-                    label: 'Ich stimme generell nicht zu'
-                  },
-                  {
-                    label: 'Ich stimme gar nicht zu'
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-});
+//     id:0,
+//     moduleStep:0,
+//     template:
+//       {
+//         modules:[
+//           {
+//             components: [
+//               {
+//                 __component: 'components.question',
+//                 isRanking:true,
+//                 question:"Ich bin der klügste im ganzen raum",
+//                 answers: [
+//                   {
+//                     label: 'Ich stimme vollkommen zu'
+//                   },
+//                   {
+//                     label: 'Ich stimme in Teilen zu'
+//                   },
+//                   {
+//                     label: 'Ich stimme bedingt zu'
+//                   },
+//                   {
+//                     label: 'Ich stimme meistens nicht zu'
+//                   },
+//                   {
+//                     label: 'Ich stimme generell nicht zu'
+//                   },
+//                   {
+//                     label: 'Ich stimme gar nicht zu'
+//                   }
+//                 ]
+//               }
+//             ]
+//           }
+//         ]
+//       }
+// });
 
-// if (!get(user_token)) {
-//     svelteNative(Login, {});
-// }else{
-//     svelteNative(Home, {});
-// }
+if (!get(user_token)) {
+    svelteNative(Login, {});
+}else{
+    svelteNative(Home, {});
+}
 
