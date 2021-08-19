@@ -8,7 +8,7 @@
         <stackLayout class="" paddingTop="{statusBarHeight}px">
             {#each module.components as component,c}
                 {#if component.__component=='components.question'}
-                    <label textWrap="true" class="text-md p-4 font-semibold" text="{component.question}" />
+                    <label horizontalAlignment="left" textWrap="true" class="bg-blue text-md italic text-white my-4 py-2 pl-4 pr-12" text="{component.question}" />
                     {#if component.isRanking}
                         {#if component.answers.length>5}
                             <label textWrap="true" class="text-xs text-right fas mr-4" text="Scrollen für mehr Antworten &#xf30b" />
@@ -71,8 +71,8 @@
                 {:else if component.__component=='components.textarea'}
                     <htmlView html="{component.text}" />
                 {:else if component.__component=='components.textfield'}
-                    <label textWrap="true" class="text-md pt-6 px-4 font-semibold" text="{component.label}" />
-                    <textField class="input border-gray-300" bind:text="{component.result}"/>
+                    <label horizontalAlignment="left" textWrap="true" class="bg-blue text-md italic text-white mt-4 py-2 pl-4 pr-12" text="{component.label}" />
+                    <textField class="input border-gray-400 bg-gray-300 m-4 p-4 w-full" bind:text="{component.result}"/>
                 {/if}
             {/each}
 
