@@ -1,45 +1,52 @@
-<page actionBarHidden="true">
-    <scrollView  height="100%" width="100%">
-        <stackLayout class="page ns-light" paddingTop="{statusBarHeight}px">
-            <label textWrap="true" class="text-md" text="{moduleStep}" />
+<page actionBarHidden="true">    <dockLayout stretchLastChild="true" class="page ns-light">
+    {#if template.modules.length>moduleStep+1}
+        <stackLayout dock="bottom">
+            <label text="Weiter" on:tap="{next}" class="btn bg-green text-white w-full bottombtn" marginTop="20"/>
+        </stackLayout>
+    {/if}
+    <scrollView dock="top" >
+        <stackLayout class="" paddingTop="{statusBarHeight}px">
             {#each module.components as component,c}
                 {#if component.__component=='components.question'}
-                    <label textWrap="true" class="text-md" text="{component.question}" />
+                    <label textWrap="true" class="text-md p-4 font-semibold" text="{component.question}" />
                     {#if component.isRanking}
+                        {#if component.answers.length>5}
+                            <label textWrap="true" class="text-xs text-right fas mr-4" text="Scrollen für mehr Antworten &#xf30b" />
+                        {/if}
                         <scrollView width="100%" orientation="horizontal">
-                        <flexboxLayout class="py-2" backgroundColor="#eee" justifyContent="center" width="{component.answers.length>5?`${100+(component.answers.length-5)*20}%`:'100%'}">
-                            {#each component.answers as answer,a}
-                            <stackLayout
-                                    orientation="vertical"
-                                    flexGrow="1"
-                                    class="px-1"
-                                    on:tap={() => selectAnswer(c,a)}
-                                >
-                                    <label
-                                    horizontalAlignment="center"
-                                    textWrap="true"
-                                    text={answer.selected
-                                        ? String.fromCharCode(0xf058)
-                                        : String.fromCharCode(0xf111)}
-                                    class="text-lg text-green {answer.selected
-                                        ? 'fas'
-                                        : 'far'}"
-                                    />
-                                    <label
-                                    verticalAlignment="center"
-                                    textWrap="true"
-                                    class="text-xs text-center"
-                                    text={answer.label}
-                                    />
-                                </stackLayout>
-                            {/each}
-                        </flexboxLayout>
+                            <flexboxLayout class="py-4 bg-gray-100" justifyContent="center" width="{component.answers.length>5?`${100+(component.answers.length-5)*20}%`:'100%'}">
+                                {#each component.answers as answer,a}
+                                <stackLayout
+                                        orientation="vertical"
+                                        flexGrow="1"
+                                        class="px-1"
+                                        on:tap={() => selectAnswer(c,a)}
+                                    >
+                                        <label
+                                        horizontalAlignment="center"
+                                        textWrap="true"
+                                        text={answer.selected
+                                            ? String.fromCharCode(0xf058)
+                                            : String.fromCharCode(0xf111)}
+                                        class="text-lg  {answer.selected
+                                            ? 'fas text-green'
+                                            : 'far'}"
+                                        />
+                                        <label
+                                        verticalAlignment="center"
+                                        textWrap="true"
+                                        class="text-xs text-center"
+                                        text={answer.label}
+                                        />
+                                    </stackLayout>
+                                {/each}
+                            </flexboxLayout>
                         </scrollView>
                     {:else}
                         {#each component.answers as answer,a}
                                 <stackLayout
                                     orientation="horizontal"
-                                    class="mb-2"
+                                    class="mb-2 px-4"
                                     on:tap={() => selectAnswer(c,a)}
                                 >
                                     <label
@@ -48,7 +55,7 @@
                                     text={answer.selected
                                         ? String.fromCharCode(0xf14a)
                                         : String.fromCharCode(0xf0c8)}
-                                    class="text-lg text-green ml-1 {answer.selected
+                                    class="text-lg text-green {answer.selected
                                         ? 'fas'
                                         : 'far'}"
                                     />
@@ -64,17 +71,14 @@
                 {:else if component.__component=='components.textarea'}
                     <htmlView html="{component.text}" />
                 {:else if component.__component=='components.textfield'}
-                    <label textWrap="true" class="text-md" text="{component.label}" />
+                    <label textWrap="true" class="text-md pt-6 px-4 font-semibold" text="{component.label}" />
                     <textField class="input border-gray-300" bind:text="{component.result}"/>
                 {/if}
             {/each}
 
-            {#if template.modules.length>moduleStep+1}
-                <button text="Weiter" on:tap="{next}" class="btn bg-green" marginTop="20"/>
-            {/if}
-
-        </stackLayout>
-    </scrollView>
+            </stackLayout>
+        </scrollView>
+    </dockLayout>
 </page>
 
 

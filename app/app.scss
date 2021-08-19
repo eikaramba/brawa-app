@@ -19,13 +19,13 @@ The imported CSS rules must precede all other types of rules.
 @import './font-awesome.css';
 
 .ns-root {
-    --red:theme('colors.red.DEFAULT');
+    --red:theme('colors.red.500');
     --yellow:theme('colors.yellow.DEFAULT');
 
     --page:theme('colors.page');
     --dark: theme('colors.dark');
 
-    --orange:theme('colors.orange.500');
+    --orange:theme('colors.orange.DEFAULT');
     --green:theme('colors.green.500');
     --gray: theme('colors.gray.500');
     --gray-50:theme('colors.gray.50');
@@ -40,7 +40,16 @@ The imported CSS rules must precede all other types of rules.
     --gray-900:theme('colors.gray.900');
     --blue: theme('colors.blue.500');
 }
-
+.bg-green { background-color: var(--green);}
+.bg-blue { background-color: var(--blue);}
+.bg-red { background-color: var(--red);}
+.bg-yellow { background-color: var(--yellow);}
+.bg-orange { background-color: var(--orange);}
+.text-green { color: var(--green);}
+.text-blue { color: var(--blue);}
+.text-red { color: var(--red);}
+.text-yellow { color: var(--yellow);}
+.text-orange { color: var(--orange);}
 
 .page {
     color: var(--dark);

@@ -13,25 +13,17 @@ module.exports = {
       '2xl': ['24', '10'],
       '3xl': ['26', '10']
     },
+
     extend: {
       colors: {
         transparent: 'transparent',
         current: 'currentColor',
-        blue: {
-          DEFAULT: '#3B82F6',
-        },
-        green: {
-          DEFAULT: '#10B981',
-        },
         gray: colors.blueGray,
         page:'#F3F5Fd',
-        red: {
-          DEFAULT: '#FF9D33'
-        },
         yellow: {
           DEFAULT: '#FFDF85'
         },
-        orange: colors.orange,
+        orange: {DEFAULT:'#FF9D33'},
         dark: '#3F3F3F'
       },
     },

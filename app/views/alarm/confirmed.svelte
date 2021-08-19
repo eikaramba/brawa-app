@@ -1,22 +1,25 @@
 <page actionBarHidden="true">
-    <scrollView  height="100%" width="100%">
-        <stackLayout class="page ns-light" paddingTop="{statusBarHeight}px">
-            {#if template.fehlalarm}
-                <label textWrap="true" class="text-md" text="Dies war ein Fehlalarm." />
-            {/if}
-            <webView  src={template.quittierung_text} class="w-full"/>
-            {#if template.modules?.length>0}
-                <button text="Weiter" on:tap="{next}" class="btn bg-green" marginTop="20"/>
-            {/if}
+    <dockLayout stretchLastChild="true" class="page ns-light">
+        {#if template.modules?.length>0}
+            <stackLayout dock="bottom">
+                <label text="Weiter" on:tap="{next}" class="btn bg-green text-white w-full bottombtn" marginTop="20"/>
+            </stackLayout>
+        {/if}
+        <scrollView dock="top" >
+            <stackLayout class="p-4" paddingTop="{statusBarHeight}px">
+                {#if template.fehlalarm}
+                    <label textWrap="true" class="text-md" text="Dies war ein Fehlalarm." />
+                {/if}
+                <webView src={template.quittierung_text} class="w-full bg-page"/>
 
-        </stackLayout>
-    </scrollView>
+            </stackLayout>
+        </scrollView>
+    </dockLayout>
 </page>
 
 
 
 <script>
-    import { user_profile } from '../../store/user'
     import {getStatusbarHeight} from '~/utils/helpers'
     import { onMount } from 'svelte'
     import { client } from './../../lib/client'

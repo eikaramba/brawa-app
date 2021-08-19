@@ -98,49 +98,120 @@ registerNativeViewElement("svgimage", () => require('@sergeymell/nativescript-sv
 
 Theme.setMode(Theme.Light);
 
+svelteNative(Module, {
+
+    id:24,
+    moduleStep:0,
+    template:
+      {
+        id:1,
+        layout:'ampelA',
+        brandwahrscheinlichkeit:45,
+        callToAction_text:'<h1 style="text-align:center;">Bitte <span style="color:#FF9D33;">geh </span>in den nächsten Raum</h1><h2 style="text-align:center;">überschrift 2</h2><h3 style="text-align:center;">überschrift 3</h3><p style="text-align:center;">normaler text</p><p style="text-align:center;"><span style="color:#EF4444;"><strong><u>Jetzt sofort!</u></strong></span></p>',
+        callToAction_button:'Hab ich gemacht',
+        reminder:false,
+        quittierung_text:'Super, danke das du das gemacht hast. Im Folgenden möchten wir Dir gerne noch ein paar Fragen stellen',
+        randomisierte_module:false,
+        gamification_nutzen:false,
+        nfc_nutzen:false,
+        fehlalarm:false,
+        modules:[
+          {
+            components: [
+              {
+                __component: 'components.question',
+                isRanking:true,
+                question:"Ich bin der klügste im ganzen raum",
+                answers: [
+                  {
+                    label: 'Ich stimme vollkommen zu'
+                  },
+                  {
+                    label: 'Ich stimme in Teilen zu'
+                  },
+                  {
+                    label: 'Ich stimme bedingt zu'
+                  },
+                  {
+                    label: 'Ich stimme meistens nicht zu'
+                  },
+                  {
+                    label: 'Ich stimme generell nicht zu'
+                  },
+                  {
+                    label: 'Ich stimme gar nicht zu'
+                  }
+                ]
+              },
+              {
+                __component: 'components.question',
+                question:"nochmal anders dargstellt",
+                answers: [
+                  {
+                    label: 'Ich stimme vollkommen zu'
+                  },
+                  {
+                    label: 'Ich stimme in Teilen zu'
+                  },
+                  {
+                    label: 'Ich stimme bedingt zu'
+                  },
+                  {
+                    label: 'Ich stimme meistens nicht zu'
+                  }
+                ]
+              },
+              {
+                __component: 'components.textfield',
+                label:"Wie lautet dein Name?"
+              }
+            ]
+          }
+        ]
+      }
+});
 // svelteNative(Module, {
 
-//     id:0,
-//     moduleStep:0,
-//     template:
-//       {
-//         modules:[
-//           {
-//             components: [
-//               {
-//                 __component: 'components.question',
-//                 isRanking:true,
-//                 question:"Ich bin der klügste im ganzen raum",
-//                 answers: [
-//                   {
-//                     label: 'Ich stimme vollkommen zu'
-//                   },
-//                   {
-//                     label: 'Ich stimme in Teilen zu'
-//                   },
-//                   {
-//                     label: 'Ich stimme bedingt zu'
-//                   },
-//                   {
-//                     label: 'Ich stimme meistens nicht zu'
-//                   },
-//                   {
-//                     label: 'Ich stimme generell nicht zu'
-//                   },
-//                   {
-//                     label: 'Ich stimme gar nicht zu'
-//                   }
-//                 ]
-//               }
-//             ]
-//           }
-//         ]
-//       }
+//   id:0,
+//   moduleStep:0,
+//   template:
+//     {
+//       modules:[
+//         {
+//           components: [
+//             {
+//               __component: 'components.question',
+//               isRanking:true,
+//               question:"Ich bin der klügste im ganzen raum",
+//               answers: [
+//                 {
+//                   label: 'Ich stimme vollkommen zu'
+//                 },
+//                 {
+//                   label: 'Ich stimme in Teilen zu'
+//                 },
+//                 {
+//                   label: 'Ich stimme bedingt zu'
+//                 },
+//                 {
+//                   label: 'Ich stimme meistens nicht zu'
+//                 },
+//                 {
+//                   label: 'Ich stimme generell nicht zu'
+//                 },
+//                 {
+//                   label: 'Ich stimme gar nicht zu'
+//                 }
+//               ]
+//             }
+//           ]
+//         }
+//       ]
+//     }
 // });
-
-if (!get(user_token)) {
-    svelteNative(Login, {});
-}else{
-    svelteNative(Home, {});
-}
+// if (!get(user_token)) {
+//     svelteNative(Login, {});
+// }else{
+//     svelteNative(Home, {});
+// }
 
