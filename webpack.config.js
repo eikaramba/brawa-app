@@ -1,5 +1,7 @@
 const webpack = require("@nativescript/webpack");
 const dotenv = require("dotenv");
+const NativeScriptHTTPPlugin = require("@klippa/nativescript-http/webpack"); // Import NativeScriptHTTPPlugin
+
 // const CopyWebpackPlugin = require('copy-webpack-plugin')
 // const { relative, resolve, dirname } = require('path');
 module.exports = (env) => {
@@ -51,7 +53,8 @@ module.exports = (env) => {
 	// 	context: webpack.Utils.project.getProjectFilePath('node_modules')
 	//   })
 
-	// webpack.chainWebpack(config => {
+	webpack.chainWebpack(config => {
+		config.plugin('NativeScriptHTTPPlugin').use(NativeScriptHTTPPlugin)
 	// 	config.module
 	// 		.rule('scss')
 	// 		.use('sass-loader')
@@ -64,7 +67,7 @@ module.exports = (env) => {
 	// 		.options({
 	// 			example: true
 	// 		})
-	//   })
+	  })
 
 
 	// {

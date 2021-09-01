@@ -1,6 +1,7 @@
 import { EventEmitter } from "~/utils/eventemitter";
 import { get } from 'svelte/store';
 import { user_token } from '~/store/user'
+import { Http } from "@nativescript/core";
 
 type ValidationErrors = {[index: string]: string[]}
 
@@ -35,25 +36,22 @@ class ApiClient {
         }
         let res;
         try {
-           res = await fetch(
-                `${API_BASE}${relative_url}`,
-                {
+           res = await Http.request({
+                url:`${API_BASE}${relative_url}`,
                     method: method,
-                    mode: "cors",
                     headers: headers,
-                    body: payload ? JSON.stringify(payload) : null
-                }
+                    content: payload ? JSON.stringify(payload) : null
             )
         } catch (e) {
             console.log("error running fetch", e)
             throw e;
         }
 
-        if (!res.ok) {
-            let err = new ApiError(res.statusText, res.status)
-            if (res.status == 422) {
+        if (res.statusCode >= 300 && res.statusCode < 200) {
+            let err = new ApiError(res.statusText, res.statusCode)
+            if (res.statusCode == 422) {
                 try {
-                    let validation_errors = await res.json();
+                    let validation_errors = await res.content.toJSON();
                     err.errors = validation_errors;
                 } catch {}
             }
@@ -64,7 +62,7 @@ class ApiClient {
         try {
             // console.log("res",res.json());
             if(raw) return res;
-            else return await res.json()
+            else return await res.content.toJSON()
         } catch {
             let err = new ApiError("Error parsing server response");
             this.onError.fire(err);

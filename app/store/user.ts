@@ -64,7 +64,7 @@ export function login(email: string):Promise<User> {
     return client.post<any>('/auth/local', {
         identifier: email
     },true).then(async loginResponse => {
-        const token = getCookie(loginResponse.headers.map['set-cookie'],"token");
+        const token = getCookie(loginResponse.headers['Set-Cookie'],"token");
         user_token.set(token);
         const user = await client.get<any>('/users/me');
         user_profile.set(user);
@@ -118,7 +118,7 @@ export function signup(email: string):Promise<User> {
         username: email,
         email: email
     },true).then(async response => {
-        const token = getCookie(response.headers.map['set-cookie'],"token");
+        const token = getCookie(response.headers['Set-Cookie'],"token");
         user_token.set(token);
         const user = await client.get<any>('/users/me');
         user_profile.set(user);
