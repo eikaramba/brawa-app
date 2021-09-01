@@ -127,7 +127,6 @@
                     });
                 }
             }
-            console.log(results);
 
             if(results.length>0)
             await client.post(`/alarms/${id}/moduleResults/${moduleStep}`,{moduleId:module.id,submitted_at:new Date(),results});

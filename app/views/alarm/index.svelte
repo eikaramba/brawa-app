@@ -51,6 +51,8 @@
     import { navigate } from 'svelte-native'
     import ConfirmedPage from './confirmed.svelte'
     import {Nfc} from "nativescript-nfc"
+    import {startAccelerometerUpdates,stopAccelerometerUpdates}  from "nativescript-accelerometer";
+    // import { time } from "tns-core-modules/profiling";
 
 
     let statusBarHeight=0;
@@ -58,18 +60,21 @@
     export let template;
     let nextPageProps = {};
 
+    let totalForce = 0;
+    let maximalForce = 0;
+
     onMount(async ()=>{
         statusBarHeight = getStatusbarHeight();
-        // await client.put(`/alarms/${id}`,{opened_at:new Date()});
+        await client.put(`/alarms/${id}`,{opened_at:new Date()});
 
         // maximum size of FCM custom data is 4096 bytes, thus we fetch the complete template data set here, as the user is likely to have a internet connection
         
-        // try {
-        //     template = await client.get(`/templates/${template.id}`);
-        //     console.log(template.modules)
-        // } catch (err) {
-        //     console.error("could not load template data from backend. ", err)
-        // }
+        try {
+            template = await client.get(`/templates/${template.id}`);
+            console.log(template.modules)
+        } catch (err) {
+            console.error("could not load template data from backend. ", err)
+        }
         nextPageProps = {id,template};
 
         if(template.randomisierte_module) {
@@ -104,9 +109,22 @@
             }
         }
 
+        // const now = time();
+        startAccelerometerUpdates(function(data) {
+            const forceVector = Math.abs(Math.sqrt(Math.pow(data.x, 2) + Math.pow(data.y, 2) + Math.pow(data.z, 2)) - 1);
+            if (forceVector > 0.02) {
+                totalForce += forceVector;
+            }
+            if (forceVector > maximalForce) {
+                maximalForce = forceVector;
+            }
+        }, { sensorDelay: "normal" });
+
     })
-    function next(){
+    async function next(){
         try {
+            stopAccelerometerUpdates();
+            await client.put(`/alarms/${id}`,{accelerometerMaximum:maximalForce.toFixed(2),accelerometerTotal:totalForce.toFixed(2)});
             navigate({ page: ConfirmedPage,props:nextPageProps });
         } catch (err) {
             console.error(err);
