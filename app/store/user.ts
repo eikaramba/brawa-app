@@ -1,4 +1,4 @@
-import { writable, derived, get } from 'svelte/store';
+import { writable,  get } from 'svelte/store';
 import { client } from '../lib/client'
 import * as appSettings from '@nativescript/core/application-settings'
 import { User } from '~/models/user';
@@ -25,15 +25,8 @@ export const user_token = buildUserTokenStore();
 function buildUserProfileStore() {
     const user_profile = writable(null)
 
-    const user_profile_with_defaults = derived(user_profile, profile => {
-        if (profile && !profile.image) {
-            profile.image = "https://static.productionready.io/images/smiley-cyrus.jpg"
-        }
-        return profile;
-    });
-
     return {
-        subscribe: user_profile_with_defaults.subscribe,
+        subscribe: user_profile.subscribe,
 
         async loadUserFromToken() {
             if (!get(user_token)) return null;
@@ -71,17 +64,6 @@ export function login(email: string):Promise<User> {
         return user;
     })
 }
-
-// export function oauthLogin(accessToken: string,provider:string):Promise<User> {
-//     return client.get<any>(`/auth/${provider}/callback?access_token=${accessToken}`,true).then(async loginResponse => {
-//         if(loginResponse.status!=200) throw Error;
-//         const token = getCookie(loginResponse.headers.map['set-cookie'],"token");
-//         user_token.set(token);
-//         const user = await client.get<any>('/users/me');
-//         user_profile.set(user);
-//         return user;
-//     })
-// }
 
 interface ProfileUpdate {
     avatar_url: string
