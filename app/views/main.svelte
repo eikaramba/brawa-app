@@ -5,13 +5,13 @@
                 <activityIndicator busy="true" horizontalAlignment="center" verticalAlignment="center" height="25%" width="25%" />
                 </flexboxLayout>
             {:then}
-            <stackLayout class="page ns-light" height="100%" paddingTop="{statusBarHeight}px">
+            <stackLayout class="page ns-light p-4" height="100%" paddingTop="{statusBarHeight}px">
                 {#if $user_profile}
-                <label textWrap="true" class="text-md" text="Eingeloggt als {$user_profile.username}." />
+                <label textWrap="true" class="text-md font-medium" text="Eingeloggt als {$user_profile.username} ({$user_profile.email})." />
                 {/if}
                 <!-- https://ajax.systems/de/blog/ajax-alerts/ -->
-                <label textWrap="true" class="text-md" text="Um keine Benachrichtigungen im Modus Nicht stören zu verpassen, wenn nur wichtige Benachrichtigungen angezeigt werden sollen, muss die Option „Nicht stören“ ignorieren eingeschaltet werden." />
-                <button text="Logout now" class="text-md bg-white text-green border-0 border-white flatBtn mt-4" on:tap="{doLogout}" />
+                <label textWrap="true" class="text-md mt-4" text="Um keine Benachrichtigungen im Modus 'Nicht stören' zu verpassen, muss die Option „Nicht stören“ ignorieren eingeschaltet werden." />
+                <button text="App mit anderer Email nutzen" class="text-md bg-white text-green border-0 border-white flatBtn mt-4 my-0 w-full" on:tap="{doLogout}" />
             </stackLayout>
             {/await}
     </scrollView>

@@ -63,6 +63,13 @@
     let totalForce = 0;
     let maximalForce = 0;
 
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
     onMount(async ()=>{
         statusBarHeight = getStatusbarHeight();
         await client.put(`/alarms/${id}`,{opened_at:new Date()});
@@ -71,21 +78,21 @@
         
         try {
             template = await client.get(`/templates/${template.id}`);
-            console.log(template.modules)
         } catch (err) {
             console.error("could not load template data from backend. ", err)
         }
         nextPageProps = {id,template};
-
         if(template.randomisierte_module) {
             // randomize modules and put the list as integers into an array
             let randomArray = [];
+            let endModules = [];
             for (let i = 0; i < template.modules.length; i++) {
-                randomArray.push(i);
+                if(template.modules[i].isLast) endModules.push(i)
+                else randomArray.push(i);
             }
             // shuffle the array
             shuffle(randomArray);
-            nextPageProps.moduleSteps = randomArray;
+            nextPageProps.moduleSteps = [...randomArray,...endModules];
         }
 
         if(template.nfc_nutzen){
@@ -99,7 +106,7 @@
                 .setOnNdefDiscoveredListener(function (data) {
                     console.log("got nfc",data);
                     // nfc.setOnNdefDiscoveredListener(null);
-                    navigate({ page: ConfirmedPage,props:nextPageProps });
+                    next();
                 })
                 .then(function () {
                     console.log("OnNdefDiscovered listener added");
