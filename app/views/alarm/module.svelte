@@ -1,9 +1,7 @@
 <page actionBarHidden="true">    <dockLayout stretchLastChild="true" class="page ns-light">
-    {#if template.modules.length>moduleStep+1}
-        <stackLayout dock="bottom">
-            <label text="Weiter" on:tap="{next}" class="btn bg-green text-white w-full bottombtn" marginTop="20"/>
-        </stackLayout>
-    {/if}
+    <stackLayout dock="bottom">
+        <label text="{template.modules.length>moduleStep+1?'Weiter':'Fertig'}" on:tap="{next}" class="btn bg-green text-white w-full bottombtn" marginTop="20"/>
+    </stackLayout>
     <scrollView dock="top" >
         <stackLayout class="" paddingTop="{statusBarHeight}px">
             {#each module.components as component,c}
@@ -131,7 +129,10 @@
             if(results.length>0)
             await client.post(`/alarms/${id}/moduleResults/${moduleStep}`,{moduleId:module.id,submitted_at:new Date(),results});
     
+            if(template.modules.length>moduleStep+1)
             navigate({ page: NextModule, props:{id,template,moduleStep:moduleStep+1,moduleSteps} });
+            else
+            android.os.Process.killProcess(android.os.Process.myPid());
 
     }
 
