@@ -52,10 +52,16 @@ if (isAndroid) {
       AndroidApplication.activityCreatedEvent,
       (args: any) => {
         createAndroidNotificationChannel({
-          id: "alarme",
-          name: "Alarme",
+          id: "AlarmA",
+          name: "Alarmtyp A",
           description: "Wird ausgelöst bei potentielle Brandgefahren",
-          soundFilename: "alarm2", //  filename (without the extension)
+          soundFilename: "alarma",
+        });
+        createAndroidNotificationChannel({
+          id: "AlarmB",
+          name: "Alarmtyp B",
+          description: "Wird ausgelöst bei potentielle Brandgefahren",
+          soundFilename: "alarmb",
         });
         createAndroidNotificationChannel({
           id: "reminder",

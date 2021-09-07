@@ -10,7 +10,7 @@
                   </formattedString>
                 </label>
             {:else}
-                <label text="{template.callToAction_button}" on:tap="{next}" class="btn bg-green text-white w-full bottombtn" marginTop="20"/>
+                <label textWrap="true"  text="{template.callToAction_button}" on:tap="{next}" class="btn bg-green text-white w-full bottombtn" marginTop="20"/>
             {/if}
         </stackLayout>
 
@@ -34,7 +34,12 @@
                 {/if}
 
                 
-                <htmlView class="mt-8" html={template.callToAction_text} />
+                {#if template.alarmierte_personen>0}
+                    <label textWrap="true" class="text-center w-full mt-4" text="Außer dir wurden {template.alarmierte_personen} weitere Personen alarmiert" />
+                {/if}
+
+                
+                <webView src={template.callToAction_text} class="mt-8 w-full bg-page"/>
 
                 
 

@@ -116,7 +116,7 @@
                     }
                     results.push({
                         label: component.question,
-                        answers
+                        answer: answers
                     });
                 }else if (component.__component=='components.textfield'){
                    results.push({
