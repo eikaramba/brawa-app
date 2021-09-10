@@ -8,7 +8,7 @@ import { svelteNative } from "svelte-native";
 import Home from  "./views/main.svelte";
 import Login from  "./views/login.svelte";
 // import Module from  "./views/alarm/module.svelte";
-// import AlarmPage from './views/alarm/index.svelte';
+import AlarmPage from './views/alarm/index.svelte';
 import Theme from "@nativescript/theme";
 
 import { get } from 'svelte/store';
@@ -106,7 +106,7 @@ Theme.setMode(Theme.Light);
 
 // svelteNative(AlarmPage, {
 
-//     id:24,
+//     id:60,
 //     moduleStep:0,
 //     template:
 //       {

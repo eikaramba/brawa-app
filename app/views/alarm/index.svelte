@@ -57,6 +57,7 @@
     import ConfirmedPage from './confirmed.svelte'
     import {Nfc} from "nativescript-nfc"
     import {startAccelerometerUpdates,stopAccelerometerUpdates}  from "nativescript-accelerometer";
+    import { Utils, Device } from '@nativescript/core'
     // import { time } from "tns-core-modules/profiling";
 
 
@@ -67,6 +68,11 @@
 
     let totalForce = 0;
     let maximalForce = 0;
+    let steps = 0;
+    const sensorManager = Utils.android
+            .getApplicationContext()
+            .getSystemService(android.content.Context.SENSOR_SERVICE)
+    let sensorListener;
 
     function shuffle(array) {
         for (let i = array.length - 1; i > 0; i--) {
@@ -121,6 +127,23 @@
             }
         }
 
+
+        let initialSteps = -1;
+            
+        const sensor = sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_STEP_COUNTER);
+        if (sensor) {
+            sensorListener = new android.hardware.SensorEventListener({
+                    onSensorChanged: (sensorEvent ) => {
+                        if(initialSteps==-1) initialSteps = sensorEvent.values[0];
+                        steps = sensorEvent.values[0] - initialSteps;
+                    },
+                    onAccuracyChanged: (sensor, accuracy) => {
+                    }
+                });
+            const listener = sensorManager.registerListener(sensorListener, sensor, android.hardware.SensorManager.SENSOR_DELAY_NORMAL);
+            console.log(listener);
+        }
+
         // const now = time();
         startAccelerometerUpdates(function(data) {
             const forceVector = Math.abs(Math.sqrt(Math.pow(data.x, 2) + Math.pow(data.y, 2) + Math.pow(data.z, 2)) - 1);
@@ -136,7 +159,8 @@
     async function next(){
         try {
             stopAccelerometerUpdates();
-            await client.put(`/alarms/${id}`,{accelerometerMaximum:maximalForce.toFixed(2),accelerometerTotal:totalForce.toFixed(2)});
+            sensorManager.unregisterListener(sensorListener);
+            await client.put(`/alarms/${id}`,{accelerometerMaximum:maximalForce.toFixed(2),accelerometerTotal:totalForce.toFixed(2),steps});
             navigate({ page: ConfirmedPage,props:nextPageProps });
         } catch (err) {
             console.error(err);
