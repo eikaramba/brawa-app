@@ -7,7 +7,7 @@
                 <label textWrap="true" class="text-white text-center text-lg">
                     <formattedString>
                         <span text="Mit dieser App bist du Teil des " />
-                        <span text="Brawa Projektes zur frühen Bekämpfung von Bränden!" fontWeight="bold" />
+                        <span text="BRAWA Projektes zur frühen Bekämpfung von Bränden!" fontWeight="bold" />
                     </formattedString>
                 </label>
                 </stackLayout>

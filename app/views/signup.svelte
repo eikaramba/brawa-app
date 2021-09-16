@@ -7,7 +7,7 @@
                 <label textWrap="true" class="text-white text-center text-lg">
                     <formattedString>
                         <span text="Mit dieser App bist du Teil des" />
-                        <span text="Brawa Projektes zur frühen Bekämpfung von Bränden" fontWeight="bold" />
+                        <span text="BRAWA Projektes zur frühen Bekämpfung von Bränden" fontWeight="bold" />
                         <span text="! Du musst dich mit deiner PsyWeb E-Mail einloggen ." />
                     </formattedString>
                 </label>
@@ -23,7 +23,7 @@
                 bind:text="{email}" returnKeyType="next" editable="{!isLoading}"/>
                 
                 <stackLayout orientation="horizontal">
-                    <label verticalAlignment="center" textWrap="true" class="text-glue text-sm" text="Hiermit akzeptiere ich die Brawa AGB"></label>
+                    <label verticalAlignment="center" textWrap="true" class="text-glue text-sm" text="Hiermit akzeptiere ich die BRAWA AGB"></label>
                     <switch verticalAlignment="center" bind:checked="{tos}" class="switch" />
                 </stackLayout>
                 <button text="Account erstellen" isEnabled="{!!email&&!!tos&&!isLoading}" on:tap="{doSignup}" class="btn  {email&&tos?'bg-green':'bg-gray-400'}" marginTop="4"/>

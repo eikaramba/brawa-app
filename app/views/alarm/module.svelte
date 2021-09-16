@@ -23,9 +23,7 @@
                                         <label
                                         horizontalAlignment="center"
                                         textWrap="true"
-                                        text={answer.selected
-                                            ? String.fromCharCode(0xf058)
-                                            : String.fromCharCode(0xf111)}
+                                        text={getRadioIcon(answer.selected,component.multipleAnswersAllowed)}
                                         class="text-lg  {answer.selected
                                             ? 'fas text-green'
                                             : 'far'}"
@@ -50,9 +48,7 @@
                                     <label
                                     verticalAlignment="center"
                                     textWrap="true"
-                                    text={answer.selected
-                                        ? String.fromCharCode(0xf14a)
-                                        : String.fromCharCode(0xf0c8)}
+                                    text={getRadioIcon(answer.selected,component.multipleAnswersAllowed)}
                                     class="text-lg text-green {answer.selected
                                         ? 'fas'
                                         : 'far'}"
@@ -99,6 +95,22 @@
         statusBarHeight = getStatusbarHeight();
 
     })
+
+    function getRadioIcon(selected,multipleAnswersAllowed){
+        if(multipleAnswersAllowed) {
+            if(selected){
+                return String.fromCharCode(0xf14a);
+            }else{
+                return String.fromCharCode(0xf0c8);
+            }
+        }else{
+            if(selected){
+                return String.fromCharCode(0xf058);
+            }else{
+                return String.fromCharCode(0xf111);
+            }
+        }
+    }
 
     async function next(){
         // iterate over each component and collect the result depending on the type of component
