@@ -7,6 +7,5 @@ export default {
     v8Flags: '--expose_gc',
     markingMode: 'none',
     id: "com.brawa.android"
-  },
-  // webpackConfigPath: './svelte-native.webpack.config.js',
+  }
 } as NativeScriptConfig;
