@@ -65,34 +65,6 @@ export function login(email: string):Promise<User> {
     })
 }
 
-interface ProfileUpdate {
-    avatar_url: string
-    bio: string
-    email: string
-    username: string
-    new_password: string
-}
-
-export function update(update: ProfileUpdate):Promise<User> {
-    let payload:any = {
-        image: update.avatar_url,
-        bio: update.bio,
-        username: update.username,
-        email: update.email,
-    }
-    if (update.new_password) {
-        payload.new_password = update.new_password;
-    }
-
-    return client.put<any>('/users/me', {
-        user: payload
-    }).then(userResponse => {
-        let user = userResponse.user;
-        user_token.set(userResponse.jwt);
-        user_profile.set(user);
-        return user;
-    })
-}
 
 
 export function signup(email: string):Promise<User> {

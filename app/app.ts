@@ -7,7 +7,7 @@ purpose of the file is to pass control to the app’s first module.
 import { svelteNative } from "svelte-native";
 import Home from  "./views/main.svelte";
 import Login from  "./views/login.svelte";
-// import Module from  "./views/alarm/module.svelte";
+import Module from  "./views/alarm/module.svelte";
 import AlarmPage from './views/alarm/index.svelte';
 import Theme from "@nativescript/theme";
 
@@ -104,7 +104,7 @@ registerNativeViewElement("svgimage", () => require('@sergeymell/nativescript-sv
 
 Theme.setMode(Theme.Light);
 
-// svelteNative(AlarmPage, {
+// svelteNative(AlarmPage as typeof SvelteComponent, {
 
 //     id:60,
 //     moduleStep:0,
@@ -152,6 +152,7 @@ Theme.setMode(Theme.Light);
 //               {
 //                 __component: 'components.question',
 //                 question:"nochmal anders dargstellt",
+//                 multipleAnswersAllowed:true,
 //                 answers: [
 //                   {
 //                     label: 'Ich stimme vollkommen zu'
@@ -176,7 +177,7 @@ Theme.setMode(Theme.Light);
 //         ]
 //       }
 // });
-// svelteNative(Module, {
+// svelteNative(Module as typeof SvelteComponent, {
 
 //   id:0,
 //   moduleStep:0,
@@ -216,8 +217,8 @@ Theme.setMode(Theme.Light);
 //     }
 // });
 if (!get(user_token)) {
-    svelteNative(Login, {});
+    svelteNative(Login as typeof SvelteComponent, {});
 }else{
-    svelteNative(Home, {});
+    svelteNative(Home as typeof SvelteComponent, {});
 }
 

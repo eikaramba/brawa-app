@@ -62,8 +62,7 @@
     import { alert } from 'tns-core-modules/ui/dialogs'
     import {  navigate } from 'svelte-native'
     import { onMount } from 'svelte'
-    import { user_token, user_profile, login } from '../store/user'
-    // import Register from './Register'
+    import { user_profile, login } from '../store/user'
     import Home from './main.svelte'
     import Signup from './signup.svelte'
     import Theme from "@nativescript/theme";

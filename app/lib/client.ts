@@ -41,7 +41,7 @@ class ApiClient {
                     method: method,
                     headers: headers,
                     content: payload ? JSON.stringify(payload) : null
-            )
+           })
         } catch (e) {
             console.log("error running fetch", e)
             throw e;

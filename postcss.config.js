@@ -1,6 +1,6 @@
 module.exports = {
     plugins: [
         require('tailwindcss'),
-        require('nativescript-tailwind')
+        require('@nativescript/tailwind')
     ]
  }
