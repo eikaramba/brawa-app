@@ -90,7 +90,6 @@
 
 
     let email, tos;
-    email="";
     let isLoading = false;
 
     function pageLoaded(args){ //needed so that view is scrollable, even if keyboard is visible

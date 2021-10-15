@@ -71,7 +71,6 @@
 
 
     let email;
-    email="test@test.de";
     let isLoading = false;
 
     function pageLoaded(args){ //needed so that view is scrollable, even if keyboard is visible
