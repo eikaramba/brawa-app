@@ -26,9 +26,11 @@ export function createAndroidNotificationChannel(channel: {
     isAndroid &&
     android.os.Build.VERSION.SDK_INT >= ANDROID_OREO_SDK_VERSION
   ) {
+    // @ts-ignore
     const notificationChannel = new android.app.NotificationChannel(
       channel.id,
       channel.name,
+      // @ts-ignore
       android.app.NotificationManager.IMPORTANCE_HIGH
     );
     notificationChannel.setDescription(channel.description);
@@ -36,8 +38,11 @@ export function createAndroidNotificationChannel(channel: {
     notificationChannel.setLightColor(android.graphics.Color.RED);
     notificationChannel.enableVibration(true);
     if (channel.soundFilename) {
+      // @ts-ignore
       const audioAttributes = new android.media.AudioAttributes.Builder()
+      // @ts-ignore
         .setContentType(android.media.AudioAttributes.CONTENT_TYPE_SPEECH)
+        // @ts-ignore
         .setUsage(android.media.AudioAttributes.USAGE_NOTIFICATION)
         .build();
       notificationChannel.setSound(

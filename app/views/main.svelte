@@ -48,11 +48,10 @@
     function requestPermissions(){
         permissions.requestPermission(android.Manifest.permission.ACTIVITY_RECOGNITION, "Wird benötigt um Bewegungsmuster zu messen.")
         .then( () => {
-            console.log("Woo Hoo, I have the power!");
             permissionsGranted=true;
         })
         .catch( () => {
-            console.log("Uh oh, no permissions - plan B time!");
+            console.log("no activity permissions granted");
         });
     }
 

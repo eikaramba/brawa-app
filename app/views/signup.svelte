@@ -28,19 +28,6 @@
                 </stackLayout>
                 <button text="Account erstellen" isEnabled="{!!email&&!!tos&&!isLoading}" on:tap="{doSignup}" class="btn  {email&&tos?'bg-green':'bg-gray-400'}" marginTop="4"/>
 
-                <flexBoxLayout  class="mt-4">
-                    <label class="mt-2.5 border-t-2 border-gray-300" flexGrow="1"></label>
-                    <label class="text-center text-gray-400 px-8 uppercase text-xs" flexGrow="0" text="oder mit Dienst" horizontalAlignment="center" verticalAlignment="middle"></label>
-                    <label class="mt-2.5 border-t-2 border-gray-300" flexGrow="1"></label>
-                </flexBoxLayout>
-
-                <flexboxLayout justifyContent="space-between">
-                    <button textWrap="true" class="w-1/3 fab bg-red-500 text-center text-white text-xl flatBtn h-14 p-2" on:tap={()=>{openOauth('google')}} text="&#xf1a0"></button>
-                    <button textWrap="true" class="w-1/3 fab bg-blue text-center text-white text-xl flatBtn h-14 p-2" on:tap={()=>{openOauth('twitter')}} text="&#xf099"></button>
-                    <button textWrap="true" class="w-1/3 fab bg-blue-dark text-center text-white text-xl flatBtn h-14 p-4" on:tap={()=>{openOauth('facebook')}} text="&#xf39e"></button>
-                </flexboxLayout>
-            
-
                 <activityIndicator busy="{isLoading}" horizontalAlignment="center" verticalAlignment="center" class="activity-indicator" />
             </stackLayout>
 
@@ -85,7 +72,6 @@
     import Home from './main.svelte'
     import Login from './login.svelte'
     import Theme from "@nativescript/theme";
-    import { Utils } from '@nativescript/core'
     Theme.setMode(Theme.Light);
 
 
@@ -123,8 +109,5 @@
         navigate(
                 { page: Login}
             );
-    }
-    function openOauth(provider){
-        Utils.openUrl(API_BASE+`/connect/${provider}?callback=brawa://oauth/${provider}`)  
     }
 </script>

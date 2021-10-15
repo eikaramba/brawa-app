@@ -109,8 +109,4 @@
                 { page: Signup}
             );
     }
-    
-    function openOauth(provider){
-        Utils.openUrl(API_BASE+`/connect/${provider}?callback=brawa://oauth/${provider}`)  
-    }
 </script>

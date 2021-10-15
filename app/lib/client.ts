@@ -37,6 +37,7 @@ class ApiClient {
         let res;
         try {
            res = await Http.request({
+               // @ts-ignore
                 url:`${API_BASE}${relative_url}`,
                     method: method,
                     headers: headers,
