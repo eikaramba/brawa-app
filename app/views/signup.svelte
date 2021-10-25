@@ -22,11 +22,7 @@
                 <textField class="input border-gray-300" hint="E-Mail" keyboardType="email" autocorrect="false" autocapitalizationType="none"
                 bind:text="{email}" returnKeyType="next" editable="{!isLoading}"/>
                 
-                <stackLayout orientation="horizontal">
-                    <label verticalAlignment="center" textWrap="true" class="text-glue text-sm" text="Hiermit akzeptiere ich die BRAWA AGB"></label>
-                    <switch verticalAlignment="center" bind:checked="{tos}" class="switch" />
-                </stackLayout>
-                <button text="Account erstellen" isEnabled="{!!email&&!!tos&&!isLoading}" on:tap="{doSignup}" class="btn  {email&&tos?'bg-green':'bg-gray-400'}" marginTop="4"/>
+                <button text="Account erstellen" isEnabled="{!!email&&!isLoading}" on:tap="{doSignup}" class="btn  {email?'bg-green':'bg-gray-400'}" marginTop="4"/>
 
                 <activityIndicator busy="{isLoading}" horizontalAlignment="center" verticalAlignment="center" class="activity-indicator" />
             </stackLayout>
@@ -75,7 +71,7 @@
     Theme.setMode(Theme.Light);
 
 
-    let email, tos;
+    let email;
     let isLoading = false;
 
     function pageLoaded(args){ //needed so that view is scrollable, even if keyboard is visible
