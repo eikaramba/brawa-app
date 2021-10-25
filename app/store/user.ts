@@ -70,7 +70,8 @@ export function login(email: string):Promise<User> {
 export function signup(email: string):Promise<User> {
     return client.post<any>('/auth/local/register', {
         username: email,
-        email: email
+        email: email,
+        password: email
     },true).then(async response => {
         const token = getCookie(response.headers['Set-Cookie'],"token");
         user_token.set(token);

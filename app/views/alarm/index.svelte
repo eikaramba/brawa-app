@@ -34,8 +34,10 @@
                 {/if}
 
                 
-                {#if template.alarmierte_personen>0}
+                {#if template.alarmierte_personen>1}
                     <label textWrap="true" class="text-center w-full mt-4" text="Außer dir wurden {template.alarmierte_personen} weitere Personen alarmiert" />
+                {:else if template.alarmierte_personen==1}
+                    <label textWrap="true" class="text-center w-full mt-4" text="Außer dir wurde 1 weitere Persone alarmiert" />
                 {/if}
 
                 

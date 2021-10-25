@@ -94,14 +94,12 @@
 
     async function doSignup() {
         isLoading = true
-        await signup(email).then(
-            user => navigate(
-                { page: Home, clearHistory: true }
-            ),
-            err => {
-                alert(err.message);
-            }
-        )
+        try {
+            await signup(email);
+            navigate({ page: Home, clearHistory: true })
+        } catch (err) {
+            alert(err.message);
+        }
         isLoading = false
     }
 

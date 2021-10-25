@@ -47,9 +47,13 @@ class ApiClient {
             console.log("error running fetch", e)
             throw e;
         }
-
-        if (res.statusCode >= 300 && res.statusCode < 200) {
-            let err = new ApiError(res.statusText, res.statusCode)
+        if (res.statusCode >= 300 || res.statusCode < 200) {
+            let statusText = res.statusText;
+            if(!statusText) {
+                const output = await res.content.toJSON();
+                statusText = output.message[0]?.messages[0]?.message;
+            }
+            let err = new ApiError(statusText, res.statusCode)
             if (res.statusCode == 422) {
                 try {
                     let validation_errors = await res.content.toJSON();
