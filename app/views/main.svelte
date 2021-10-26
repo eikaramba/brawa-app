@@ -11,7 +11,7 @@
                 {/if}
                 <!-- https://ajax.systems/de/blog/ajax-alerts/ -->
                 <label textWrap="true" class="text-md mt-4" text="Um keine Benachrichtigungen im Modus 'Nicht stören' zu verpassen, muss die Option „Nicht stören“ ignorieren eingeschaltet werden." />
-                {#if !permissionsGranted}
+                {#if activityRecognitionAvailable && !permissionsGranted}
                 <button text="Berechtigungen erlauben" class="text-md bg-white text-green border-0 border-white flatBtn mt-4 my-0 w-full" on:tap="{requestPermissions}" />
                 {/if}
                 <button text="App mit anderer Email nutzen" class="text-md bg-white text-green border-0 border-white flatBtn mt-4 my-0 w-full" on:tap="{doLogout}" />
@@ -32,11 +32,13 @@
     import Login from './login.svelte';
     import { navigate } from 'svelte-native'
     import { Toasty,ToastDuration } from "@triniwiz/nativescript-toasty"
+    import { crashlytics } from "@nativescript/firebase/crashlytics";
     const permissions = require( "nativescript-permissions" );
     
 
     let statusBarHeight=0;
     let permissionsGranted=false;
+    let activityRecognitionAvailable=false;
     let loadingPromise = Promise.resolve([]);
 
     function doLogout() {
@@ -57,7 +59,10 @@
 
     onMount(async ()=>{
         loadingPromise = new Promise(resolve => setTimeout(resolve, 500));
-        permissionsGranted = permissions.hasPermission(android.Manifest.permission.ACTIVITY_RECOGNITION);
+        if (global.isAndroid && Device.sdkVersion >= '29') {
+            activityRecognitionAvailable=true;
+            permissionsGranted = permissions.hasPermission(android.Manifest.permission.ACTIVITY_RECOGNITION);
+        }
         statusBarHeight = getStatusbarHeight();
         console.log("starting app with ", $user_profile, $user_token);
         if (!$user_profile) {
