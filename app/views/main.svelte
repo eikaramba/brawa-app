@@ -70,6 +70,8 @@
             await user_profile.loadUserFromToken();
             console.log("profile loaded from server:", $user_profile);
         }
+        crashlytics.setUserId($user_profile.id);
+        crashlytics.setString("userId", $user_profile.id);
 
         firebase.init({
             showNotifications: true,
