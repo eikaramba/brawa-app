@@ -70,8 +70,12 @@
             await user_profile.loadUserFromToken();
             console.log("profile loaded from server:", $user_profile);
         }
-        crashlytics.setUserId($user_profile.id);
-        crashlytics.setString("userId", $user_profile.id);
+        try {
+            crashlytics.setUserId(""+$user_profile.id);
+            crashlytics.setString("userId", $user_profile.id);
+        } catch (err) {
+            console.log("error setting userId", err);
+        }
 
         firebase.init({
             showNotifications: true,
@@ -85,17 +89,22 @@
         .then(() => {
             console.log('[Firebase] Initialized');
             firebase.addOnMessageReceivedCallback((message) => {
-                const template = JSON.parse(message.data.template);
-                console.log('[Firebase] onMessageReceivedCallback:', { message });
-                if(template.reminder) {
-                    navigate({ page: ReminderPage,props:{id:message.data.id,template} });
-                }else{
-                    navigate({ page: AlarmPage,props:{id:message.data.id,template} });
+                try {
+                    const template = JSON.parse(message.data.template);
+                    console.log('[Firebase] onMessageReceivedCallback:', { message });
+                    if(template.reminder) {
+                        navigate({ page: ReminderPage,props:{id:message.data.id,template} });
+                    }else{
+                        navigate({ page: AlarmPage,props:{id:message.data.id,template} });
+                    }
+                } catch (err) {
+                    crashlytics.sendCrashLog(new java.lang.Exception("[Firebase] message callback failed: "+err));
                 }
             })
         })
         .catch(error => {
             console.log('[Firebase] Initialize', { error });
+            crashlytics.sendCrashLog(new java.lang.Exception("[Firebase] Initialize failed: "+JSON.stringify(error)));
         });
     })
 
