@@ -109,7 +109,6 @@
     let isDnDBypassed=false;
     let hasDnDPermission=false;
     let activityResumedEventListening=false;
-    let lastAlarmId;
     const listOfAffectedManufacturers = [
         "samsung",
         "xiaomi",
@@ -281,12 +280,7 @@
                 if(intentExtras){
                     let templateJson = intentExtras.getString("templateJson");
                     let alarmId = intentExtras.getString("alarmId");
-                    console.log("------>>>>>> IntentAction: " +  args.activity.getIntent().getAction());
-                    console.log("------>>>>>> intentExtras: " +  intentExtras);
-                    console.log("------>>>>>> templateJson: " +  templateJson);
-                    console.log("------>>>>>> alarmId: " +  alarmId);
                     if(alarmId){
-                        // lastAlarmId = alarmId;
                         args.activity.getIntent().removeExtra("alarmId"); 
                         args.activity.getIntent().removeExtra("templateJson"); 
                         const template = JSON.parse(templateJson);
@@ -318,13 +312,6 @@
             );
             activityResumedEventListening = true;
         }
-
-
-        Page.on('navigatedTo', (data) => {
-            if (data.isBackNavigation) console.log("back navigation");
-            else console.log("normal navigation");
-        });
-        return ()=>{Page.off('navigatedTo')}
     })
 
     function checkPermissions(){
@@ -389,6 +376,7 @@
                     manager.notify(5487, notification)
         } catch (err) {
             console.log(err)
+            crashlytics.sendCrashLog(new java.lang.Exception("Error creating notification: "+JSON.stringify(err)));
         }
 
     }
