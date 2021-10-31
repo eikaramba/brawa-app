@@ -21,7 +21,14 @@ module.exports = {
         gray: colors.blueGray,
         page:'#F3F5Fd',
         yellow: {
-          DEFAULT: '#FFDF85'
+          '200': '#FDE68A',
+          '300': '#FCD34D',
+          '400': '#FBBF24',
+          DEFAULT: '#FFDF85',
+          '600': '#D97706',
+          '700': '#B45309',
+          '800': '#92400E',
+          '900': '#78350F'
         },
         orange: {DEFAULT:'#FF9D33'},
         dark: '#3F3F3F'

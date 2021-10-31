@@ -36,12 +36,16 @@ export function createAndroidNotificationChannel(channel: {
     notificationChannel.setDescription(channel.description);
     notificationChannel.enableLights(true);
     notificationChannel.setLightColor(android.graphics.Color.RED);
+    if(channel.id!="reminder"){
+      notificationChannel.setBypassDnd(true);
+      notificationChannel.setLockscreenVisibility(1);
+    }
     notificationChannel.enableVibration(true);
     if (channel.soundFilename) {
       // @ts-ignore
       const audioAttributes = new android.media.AudioAttributes.Builder()
       // @ts-ignore
-        .setContentType(android.media.AudioAttributes.CONTENT_TYPE_SPEECH)
+        .setContentType(android.media.AudioAttributes.CONTENT_TYPE_SONIFICATION)
         // @ts-ignore
         .setUsage(android.media.AudioAttributes.USAGE_NOTIFICATION)
         .build();
