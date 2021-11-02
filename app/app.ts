@@ -15,35 +15,11 @@ import { get } from 'svelte/store';
 import { user_token } from './store/user'
 import { registerNativeViewElement } from 'svelte-native/dom'
 import {  navigate } from 'svelte-native'
-import { Toasty,ToastDuration } from "@triniwiz/nativescript-toasty"
 import { Application, isAndroid, AndroidApplication } from "@nativescript/core";
 import { createAndroidNotificationChannel } from "./android-notification";
 
 
 require("@nativescript/firebase").firebase;
-
-console.log('start app');
-// registerUniversalLinkCallback(async ul => {
-//     console.log('Got the following appURL');
-//     console.dir(ul);
-
-//     const pathElements = ul.pathname.split("/");    
-//     if(ul.origin.indexOf('oauth')>-1){
-//         const urlParams = new URLSearchParams(ul.href);
-//         const provider = pathElements[1]
-//         const access_token = urlParams.get('access_token')
-//         try {
-//             await oauthLogin(access_token,provider)
-//             navigate(
-//                 { page: Home, clearHistory: true }
-//             )
-//         } catch (error) {
-//             const toast = new Toasty({ text: `Login mit ${provider} hat leider nicht geklappt. Bitte informiere uns über psyweb@uni-muenster.de` }).setToastDuration(ToastDuration.LONG);
-//             toast.show();
-//         }
-//     }
-//   });
-
 
 
 if (isAndroid) {

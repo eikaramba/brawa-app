@@ -40,6 +40,10 @@
                         </label>
 
                         <button on:tap="{Utils.openUrl(helpLink)}" class="text-md text-white bg-red-800 my-0 w-full" text="App Optimierungen für Brawa abschalten" />
+
+                        {#if isBackgroundRestricted}
+                            <label textWrap="true" class="text-md mt-4" text="Außerdem scheint die Akku Optimierung laut Google für die App aktiv zu sein. Bitte deaktivieren" />
+                        {/if}
                     {/if}
                 </stackLayout>
                 {/if}
@@ -89,7 +93,7 @@
     import { onMount } from 'svelte'
     import { firebase } from "@nativescript/firebase";
     import { client } from '~/lib/client'
-    import { Device,Utils,Application,AndroidApplication, } from '@nativescript/core';
+    import { Device,Utils,Application,AndroidApplication,Frame } from '@nativescript/core';
     import AlarmPage from './alarm/index.svelte';
     import ReminderPage from './reminder.svelte';
     import Login from './login.svelte';
@@ -97,7 +101,6 @@
     import { Toasty,ToastDuration } from "@triniwiz/nativescript-toasty"
     import { crashlytics } from "@nativescript/firebase/crashlytics";
     const permissions = require( "nativescript-permissions" );
-    import { Page } from '@nativescript/core/ui/page/index';
     import { createAndroidNotificationChannel } from "../android-notification";
     
 
@@ -108,6 +111,7 @@
     let loadingPromise = Promise.resolve([]);
     let isDnDBypassed=false;
     let hasDnDPermission=false;
+    let isBackgroundRestricted=false;
     let activityResumedEventListening=false;
     const listOfAffectedManufacturers = [
         "samsung",
@@ -171,7 +175,18 @@
     }
 
     function checkDevice() {
-        return listOfAffectedManufacturers.includes(Device.manufacturer.toLowerCase())
+        const affectedManufacturer = listOfAffectedManufacturers.includes(Device.manufacturer.toLowerCase());
+        if (global.isAndroid && Device.sdkVersion >= '28') {
+            try {
+                const context = Utils.ad.getApplicationContext();
+                const activityManager = context.getSystemService(android.content.Context.ACTIVITY_SERVICE);
+                isBackgroundRestricted = activityManager.isBackgroundRestricted();
+                // return affectedManufacturer && activityManager.isBackgroundRestricted();
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        return affectedManufacturer;
     }
 
     function generateDKMALink(){
@@ -234,9 +249,13 @@
             console.log("error setting userId", err);
         }
 
-
-
-        checkPermissions();
+        try {
+            var activity = Application.android.foregroundActivity || Application.android.startActivity  
+            console.log("created");
+            handleAlarmsAndPermissions(activity)
+        } catch (err) {
+            console.log(err)
+        }
 
         firebase.init({
             showNotifications: false,
@@ -247,72 +266,59 @@
                     await registerOrUpdateToken(fcmToken);
             }
         })
-        .then(() => {
-            console.log('[Firebase] Initialized');
-            firebase.addOnMessageReceivedCallback((message) => {
-                try {
-                    const template = JSON.parse(message.data.template);
-                    console.log('[Firebase] onMessageReceivedCallback:', { message });
-
-                    createNotification(message.data.id,template);
-
-                    // if(template.reminder) {
-                    //     navigate({ page: ReminderPage,props:{id:message.data.id,template} });
-                    // }else{
-                    //     navigate({ page: AlarmPage,props:{id:message.data.id,template} });
-                    // }
-                } catch (err) {
-                    crashlytics.sendCrashLog(new java.lang.Exception("[Firebase] message callback failed: "+err));
-                }
-            })
-        })
         .catch(error => {
             console.log('[Firebase] Initialize', { error });
             crashlytics.sendCrashLog(new java.lang.Exception("[Firebase] Initialize failed: "+JSON.stringify(error)));
         });
+     
 
         if(!activityResumedEventListening) {
             Application.android.on(
             AndroidApplication.activityResumedEvent,
             (args) => {
                 console.log("resumed");
-                var intentExtras = args.activity.getIntent().getExtras();
-                if(intentExtras){
-                    let templateJson = intentExtras.getString("templateJson");
-                    let alarmId = intentExtras.getString("alarmId");
-                    if(alarmId){
-                        args.activity.getIntent().removeExtra("alarmId"); 
-                        args.activity.getIntent().removeExtra("templateJson"); 
-                        const template = JSON.parse(templateJson);
-                        if(template.reminder) {
-                            navigate({ page: ReminderPage,props:{id:alarmId,template} });
-                        }else{
-                            navigate({ page: AlarmPage,props:{id:alarmId,template} });
-                        }
-                    }
-                }else{
-                    checkPermissions();
-                    if(!isDnDBypassed && hasDnDPermission){
-                        createAndroidNotificationChannel({
-                        id: "AlarmA",
-                        name: "Alarmtyp A",
-                        description: "Wird ausgelöst bei potentielle Brandgefahren",
-                        soundFilename: "alarma",
-                        });
-                        createAndroidNotificationChannel({
-                        id: "AlarmB",
-                        name: "Alarmtyp B",
-                        description: "Wird ausgelöst bei potentielle Brandgefahren",
-                        soundFilename: "alarmb",
-                        });
-                        checkPermissions();
-                    }
-                }
+                handleAlarmsAndPermissions(args.activity)
             }
             );
             activityResumedEventListening = true;
         }
     })
+    function handleAlarmsAndPermissions(activity){
+        var intentExtras = activity.getIntent().getExtras();
+        if(intentExtras){
+            let templateJson = activity.getIntent().getStringExtra("templateJson");
+            let alarmId = activity.getIntent().getIntExtra("alarmId",-1);
+            console.log("alarmId", alarmId);
+            console.log("templateJson", templateJson);
+            if(alarmId && alarmId!=-1){
+                activity.getIntent().removeExtra("alarmId"); 
+                activity.getIntent().removeExtra("templateJson"); 
+                const template = JSON.parse(templateJson);
+                if(template.reminder) {
+                    navigate({ page: ReminderPage,props:{id:alarmId,template} });
+                }else{
+                    navigate({ page: AlarmPage,props:{id:alarmId,template} });
+                }
+            }
+        }else{
+            checkPermissions();
+            if(!isDnDBypassed && hasDnDPermission){
+                createAndroidNotificationChannel({
+                id: "AlarmA",
+                name: "Alarmtyp A",
+                description: "Wird ausgelöst bei potentielle Brandgefahren",
+                soundFilename: "alarma",
+                });
+                createAndroidNotificationChannel({
+                id: "AlarmB",
+                name: "Alarmtyp B",
+                description: "Wird ausgelöst bei potentielle Brandgefahren",
+                soundFilename: "alarmb",
+                });
+                checkPermissions();
+            }
+        }
+    }
 
     function checkPermissions(){
         const context = Utils.ad.getApplicationContext();
@@ -324,69 +330,8 @@
         isDnDBypassed = channel1.canBypassDnd() && channel2.canBypassDnd()
         hasDnDPermission = manager.isNotificationPolicyAccessGranted();
     }
-
-    
-    function useAndroidX () {
-        return global.androidx && global.androidx.appcompat;
-    }
-    const NotificationManagerCompatPackageName = useAndroidX() ? global.androidx.core.app : android.support.v4.app;
-
-    async function createNotification(alarmId,template){
-        console.log("createNotification");
-        try {
-            
-                    await client.put(`/alarms/${alarmId}`,{received_at:new Date()});
-
-                    var activity = Application.android.foregroundActivity || Application.android.startActivity;
-                    let builder = new NotificationManagerCompatPackageName.NotificationCompat.Builder(activity, template.reminder?'reminder':template.alarmSound);
-
-                    const context = Utils.android.getApplicationContext();
-                    const manager = context.getSystemService(
-                        android.app.NotificationManager.class
-                    );
-
-                    // let currentInterruptionFilter = manager.getCurrentInterruptionFilter();
-
-                    manager.setInterruptionFilter(android.app.NotificationManager.INTERRUPTION_FILTER_ALL);
-                    
-
-                    //https://github.com/EddyVerbruggen/nativescript-plugin-firebase/blob/05be2bbf3f0883f46c1c84aed6b4d68bb84002f7/src/platforms/android/libraryproject/firebase/src/main/java/org/nativescript/plugins/firebase/MyFirebaseMessagingService.java
-                    //https://github.com/NativeScript/NativeScript/issues/5377
-                    let intent = new android.content.Intent(activity, com.tns.NativeScriptActivity.class)
-                    intent.flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-                    intent.putExtra("templateJson", JSON.stringify(template));
-                    intent.putExtra("alarmId", alarmId)
-                    let pendingIntent = android.app.PendingIntent.getActivity(activity, 0, intent, android.app.PendingIntent.FLAG_UPDATE_CURRENT)
-            
-                    builder.setContentTitle(template.notification_titel??'Mögliches Feuer!')  // required
-                        .setSmallIcon(Utils.android.getResources().getIdentifier("notification_icon", "drawable", "com.brawa.android"))
-                        .setContentText(template.notification_body??'Achtung Alarm, bitte sofort prüfen!')
-                        .setContentIntent(pendingIntent)
-                        .setCategory(NotificationManagerCompatPackageName.NotificationCompat.CATEGORY_ALARM)
-                        .setPriority(NotificationManagerCompatPackageName.NotificationCompat.PRIORITY_MAX)
-                        .setAutoCancel(true)
-        
- 
-                        // PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(this, 0, fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                        // .setFullScreenIntent(fullScreenPendingIntent, true);
-
-                    
-                    var notification = builder.build()
-                    manager.notify(5487, notification)
-        } catch (err) {
-            console.log(err)
-            crashlytics.sendCrashLog(new java.lang.Exception("Error creating notification: "+JSON.stringify(err)));
-        }
-
-    }
-
-
      async function registerOrUpdateToken(newfcmToken){
         try {
-                const uuid = Device.uuid;
-                
-
                 if($user_profile.fcmToken!=newfcmToken){
                     console.log(`update old token ${$user_profile.fcmToken} with new token ${newfcmToken}`);
                     await client.put(`/users/${$user_profile.id}`,{

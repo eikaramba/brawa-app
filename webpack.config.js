@@ -6,6 +6,7 @@ const NativeScriptHTTPPlugin = require("@klippa/nativescript-http/webpack"); // 
 // const { relative, resolve, dirname } = require('path');
 module.exports = (env) => {
 	dotenv.config({ path: process.env.ENV_PATH });
+	// env.appComponents = (env.appComponents || []).concat(['./app/fcmreceiver.android'])
 	webpack.init(env);
 
 
