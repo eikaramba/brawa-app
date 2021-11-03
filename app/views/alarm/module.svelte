@@ -1,6 +1,6 @@
 <page actionBarHidden="true">    <dockLayout stretchLastChild="true" class="page ns-light">
     <stackLayout dock="bottom">
-        <label text="{template.modules.length>moduleStep+1?'Weiter':'Fertig'}" on:tap="{next}" class="btn bg-green text-white w-full bottombtn" marginTop="20"/>
+        <label text="{template.modules.length>moduleStep+1?'Weiter':'Fertig'}" on:tap="{next}" class="btn w-full bottombtn {canContinue?'bg-green text-white':'bg-gray-400 text-gray-600'}" marginTop="20"/>
     </stackLayout>
     <scrollView dock="top" >
         <stackLayout class="" paddingTop="{statusBarHeight}px">
@@ -90,11 +90,18 @@
     export let moduleSteps;
     export let template;
     let module = moduleSteps? template.modules[moduleSteps[moduleStep]]: template.modules[moduleStep];
+    function canContinueFn(components){
+        if(!components || !components.length) return true;
+        const questions =components.filter(c => c.__component=='components.question');
+        if(!questions.length) return true;
+        return questions.filter(c => c.answers.filter(a => a.selected).length>0).length>0
+    }
+    $: canContinue=canContinueFn(module.components);
 
     onMount(async ()=>{
         statusBarHeight = getStatusbarHeight();
-
     })
+
 
     function getRadioIcon(selected,multipleAnswersAllowed){
         if(multipleAnswersAllowed) {
@@ -113,6 +120,7 @@
     }
 
     async function next(){
+        if(!canContinue) return;
         // iterate over each component and collect the result depending on the type of component
         // if the component is a question, iterate over each answer and check if the answer is selected
         // if the component is a textarea, get the text from the textarea
