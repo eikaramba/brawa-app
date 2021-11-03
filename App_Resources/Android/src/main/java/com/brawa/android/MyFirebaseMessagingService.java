@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import androidx.core.app.NotificationCompat;
+import android.media.AudioManager;
 import android.util.Log;
 import com.tns.NativeScriptActivity;
 
@@ -120,6 +121,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 			boolean hasDnDPermission = notificationManager.isNotificationPolicyAccessGranted();
 			if(hasDnDPermission) {
 				notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL);
+				AudioManager mobilemode = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+				mobilemode.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+				mobilemode.setStreamVolume (AudioManager.STREAM_RING,mobilemode.getStreamMaxVolume(AudioManager.STREAM_RING),0);
 			}
 
 			assert notificationManager != null;

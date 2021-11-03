@@ -1,18 +1,18 @@
 import { writable,  get } from 'svelte/store';
 import { client } from '../lib/client'
-import * as appSettings from '@nativescript/core/application-settings'
+import { getString,setString,remove } from '@nativescript/core/application-settings'
 import { User } from '~/models/user';
 
 function buildUserTokenStore() {
-    var stored_token = appSettings.getString('user_token', null);
+    var stored_token = getString('user_token', null);
     const user_token = writable(stored_token);
     return {
         subscribe: user_token.subscribe,
         set(value: string) {
             if (value) {
-                appSettings.setString('user_token', value); 
+                setString('user_token', value); 
             } else {
-                appSettings.remove('user_token');
+                remove('user_token');
             }
             user_token.set(value);
         }
@@ -51,13 +51,20 @@ function getCookie(string, key) {
     if(result) {
       return result[1];
     }
-  }
+}
+function getCaseInsensitiveAttr(headers,key){
+    if(headers[key]){
+        return headers[key];
+    }else if(headers[key.toLowerCase()]){
+        return headers[key.toLowerCase()];
+    }
+}
 
 export function login(email: string):Promise<User> {
     return client.post<any>('/auth/local', {
         identifier: email
     },true).then(async loginResponse => {
-        const token = getCookie(loginResponse.headers['Set-Cookie'],"token");
+        const token = getCookie(getCaseInsensitiveAttr(loginResponse.headers,'Set-Cookie'),"token");   
         user_token.set(token);
         const user = await client.get<any>('/users/me');
         user_profile.set(user);
@@ -73,7 +80,7 @@ export function signup(email: string):Promise<User> {
         email: email,
         password: email
     },true).then(async response => {
-        const token = getCookie(response.headers['Set-Cookie'],"token");
+        const token = getCookie(getCaseInsensitiveAttr(response.headers,'Set-Cookie'),"token");      
         user_token.set(token);
         const user = await client.get<any>('/users/me');
         user_profile.set(user);

@@ -66,7 +66,6 @@
     import Home from './main.svelte'
     import Signup from './signup.svelte'
     import Theme from "@nativescript/theme";
-    import { Utils } from '@nativescript/core'
     Theme.setMode(Theme.Light);
 
 

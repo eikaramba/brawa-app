@@ -44,11 +44,13 @@
                         {#if isBackgroundRestricted}
                             <label textWrap="true" class="text-md mt-4" text="Außerdem scheint die Akku Optimierung laut Google für die App aktiv zu sein. Bitte deaktivieren" />
                         {/if}
+
+                        <label textWrap="true" class="text-md mt-4 italic" text="Diese Meldung ist als Info anzusehen und verschwindet nicht automatisch, da es keinen Weg gibt zu erkennen ob alle Maßnahmen durchgeführt worden sind. Wenn ein Alarm ankommt scheint es aber zu funktionieren :)" />
                     {/if}
                 </stackLayout>
                 {/if}
 
-                {#if !isDnDBypassed}
+                {#if !hasDnDPermission || !isDnDBypassed}
                 <stackLayout class="my-4 p-4 bg-orange rounded-lg text-white" on:tap="{()=>{toggleTab(1)}}">
                     <flexboxLayout alignItems="center">
                         <label class="text-lg font-medium bg-white rounded-full w-7 h-7 text-red-800 text-center" text="{(checkDevice()&1)+1}" />
@@ -57,7 +59,7 @@
                     {#if setupTabOpen==1}
                     <label textWrap="true" class="text-md my-4" text="Um keine Benachrichtigungen im Modus 'Nicht stören' zu verpassen, bitte Button klicken und auf der folgenden Seite Brawa den Zugriff zulassen:" />
                     <button on:tap="{requestDnDPermissions}" class="text-md text-white bg-gray-700 my-0 w-full" text="Bitte nicht stören Zugriff zulassen" />
-                    <label textWrap="true" class="text-sm mt-4" text="Alternativ folgende Einstellungen manuell vornehmen:" />
+                    <label textWrap="true" class="text-sm mt-4" text="Sichergehen das folgende Einstellung aktiv ist (sollte automatisch gesetzt werden nach erlauben der obigen Berechtigung):" />
                     <label on:tap="{openAppSettings}" textWrap="true" class="text-sm underline font-medium" text="1. App Details aufrufen" />
                     <label textWrap="true" class="text-sm" text="2. Benachrichtigungen anklicken" />
                     <label textWrap="true" class="text-sm" text="3. Jeweils 'AlarmA', 'AlarmB' und 'Erinnerungen' anklicken und ..."/>
