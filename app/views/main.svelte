@@ -346,6 +346,63 @@
             }
      }
 
+
+/*
+how to do fcm in js purely https://discord.com/channels/603595811204366337/751068755206864916/906127778724859944
+function remoteMessageToJs(remoteMessage) {
+    var json = new org.json.JSONObject()
+    json.put("from", remoteMessage.getFrom())
+
+    var notif = remoteMessage.getNotification()
+    if (notif != null) {
+        json.put("title", notif.getTitle()).put("body", notif.getBody())
+    }
+
+    var data_json = new org.json.JSONObject()
+    var iterator = remoteMessage.getData().entrySet().iterator()
+    while (iterator.hasNext())
+    {
+        var entry = iterator.next()
+
+        data_json.put(entry.getKey(), entry.getValue())
+    }
+    json.put("data", data_json)
+
+    return JSON.parse(json)
+}
+
+com.google.firebase.messaging.FirebaseMessagingService.extend("org.nativescript.xxx.MyFirebaseMessagingService", {
+
+    onMessageReceived(remoteMessage) {
+        var message = remoteMessageToJs(remoteMessage)
+
+        
+    }
+
+})
+
+
+in webpack.config.js:
+
+module.exports = (env) => {
+    env.appComponents = (env.appComponents || []).concat([
+        './app/Backend/Firebase',
+    ])
+
+...
+})
+
+
+in the manifest I have:
+
+<service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+ */
 </script>
 
 <style>

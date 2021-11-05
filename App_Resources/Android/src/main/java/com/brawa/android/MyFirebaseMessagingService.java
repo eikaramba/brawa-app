@@ -1,5 +1,6 @@
 package com.brawa.android;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -30,6 +31,7 @@ import okhttp3.RequestBody;
 import okhttp3.MediaType;
 import java.io.IOException;
 
+import android.os.PowerManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -56,6 +58,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 		int alarmId=Integer.parseInt(data.get("id").toString());
 		String template=data.get("template").toString();
+
+
+		PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+		PowerManager.WakeLock  wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK |
+				PowerManager.ACQUIRE_CAUSES_WAKEUP |
+				PowerManager.ON_AFTER_RELEASE, "brawa::WakeLock");
+		PowerManager.WakeLock screenLock = null;
+		wakeLock.acquire();
+
+
 		sendNotification(alarmId, template);
 
 	}
@@ -119,11 +131,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 			NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 			boolean hasDnDPermission = notificationManager.isNotificationPolicyAccessGranted();
+			int oldvolume=1;
+			AudioManager mobilemode = null;
 			if(hasDnDPermission) {
 				notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL);
-				AudioManager mobilemode = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+				mobilemode = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+				oldvolume  = mobilemode.getStreamVolume(AudioManager.STREAM_RING);
 				mobilemode.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-				mobilemode.setStreamVolume (AudioManager.STREAM_RING,mobilemode.getStreamMaxVolume(AudioManager.STREAM_RING),0);
+				mobilemode.setStreamVolume(AudioManager.STREAM_RING,mobilemode.getStreamMaxVolume(AudioManager.STREAM_RING),0);
 			}
 
 			assert notificationManager != null;
@@ -131,6 +146,18 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 			setReceivedTime(alarmId);
 
+			AudioManager finalMobilemode = mobilemode;
+			int finalOldvolume = oldvolume;
+			new Thread(() -> {
+				try {
+					Thread.sleep(5000);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				if(hasDnDPermission && finalMobilemode!=null) {
+					finalMobilemode.setStreamVolume(AudioManager.STREAM_RING,finalOldvolume,0);
+				}
+			}).start();
 
 			
 		} catch (JSONException e) {
