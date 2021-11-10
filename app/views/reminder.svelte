@@ -1,10 +1,17 @@
 <page actionBarHidden="true">
-    <scrollView  height="100%" width="100%">
-        <stackLayout class="page ns-light" paddingTop="{statusBarHeight}px">
-            <label textWrap="true" class="text-md" text="Infos Über die App" />
+    <dockLayout stretchLastChild="true" class="page ns-light">
+        {#if template.modules?.length>0}
+            <stackLayout dock="bottom">
+                <label text="Weiter" on:tap="{next}" class="btn bg-green text-white w-full bottombtn" marginTop="20"/>
+            </stackLayout>
+        {/if}
+        <scrollView dock="top" >
+            <stackLayout class="p-4" paddingTop="{statusBarHeight}px">
+                <label textWrap="true" class="text-md" text="Infos Über die App" />
 
-        </stackLayout>
-    </scrollView>
+            </stackLayout>
+        </scrollView>
+    </dockLayout>
 </page>
 
 
@@ -12,23 +19,43 @@
     import {getStatusbarHeight} from '~/utils/helpers'
     import { onMount } from 'svelte'
     import { client } from '~/lib/client'
+    import FirstModule from './alarm/module.svelte'
 
 
     let statusBarHeight=0;
     export let id;
     export let template;
+    let nextPageProps = {};
 
     onMount(async ()=>{
         statusBarHeight = getStatusbarHeight();
         await client.put(`/alarms/${id}`,{opened_at:new Date()});
 
-        // maximum size of FCM custom data is 4096 bytes, thus we fetch the complete template data set here, as the user is likely to have a internet connection
-        
         try {
             template = await client.get(`/templates/${template.id}`);
-            console.log(template.modules)
+            nextPageProps = {id,template};
+            if(template.randomisierte_module) {
+                // randomize modules and put the list as integers into an array
+                let randomArray = [];
+                let endModules = [];
+                for (let i = 0; i < template.modules.length; i++) {
+                    if(template.modules[i].isLast) endModules.push(i)
+                    else randomArray.push(i);
+                }
+                // shuffle the array
+                shuffle(randomArray);
+                nextPageProps.moduleSteps = [...randomArray,...endModules];
+            }
         } catch (err) {
             console.error("could not load template data from backend. ", err)
         }
     })
+    async function next(){
+        try {
+            await client.put(`/alarms/${id}`,{confirmed_at:new Date()});
+            navigate({ page: FirstModule, props:nextPageProps });
+        } catch (err) {
+            console.error(err);
+        }
+    }
 </script>
