@@ -152,16 +152,18 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 			AudioManager finalMobilemode = mobilemode;
 			int finalOldvolume = oldvolume;
-			new Thread(() -> {
-				try {
-					Thread.sleep(30000);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				if(changedVolume && hasDnDPermission && finalMobilemode!=null) {
-					finalMobilemode.setStreamVolume(AudioManager.STREAM_RING,finalOldvolume,0);
-				}
-			}).start();
+			if(changedVolume){
+				new Thread(() -> {
+					try {
+						Thread.sleep(30000);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					if(hasDnDPermission && finalMobilemode!=null) {
+						finalMobilemode.setStreamVolume(AudioManager.STREAM_RING,finalOldvolume,0);
+					}
+				}).start();
+			}
 
 			
 		} catch (JSONException e) {
