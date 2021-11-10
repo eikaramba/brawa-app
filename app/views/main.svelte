@@ -39,10 +39,11 @@
                             </formattedString>
                         </label>
 
-                        <button on:tap="{Utils.openUrl(helpLink)}" class="text-md text-white bg-red-800 my-0 w-full" text="App Optimierungen für Brawa abschalten" />
+                        <button on:tap="{Utils.openUrl(helpLink)}" class="text-md text-white bg-red-800 my-0 w-full" text="Infos zur Problemlösung öffnen" />
 
                         {#if isBackgroundRestricted}
-                            <label textWrap="true" class="text-md mt-4" text="Außerdem scheint die Akku Optimierung laut Google für die App aktiv zu sein. Bitte deaktivieren" />
+                            <label textWrap="true" class="text-md mt-4" text="Außerdem scheint die Akku Optimierung laut Google für die App aktiv zu sein. Bitte in den Einstellungen deaktivieren" />
+                            <button on:tap={openAppSettings} class="text-md text-white bg-red-800 my-0 w-full" text="Akku Optimierungen für Brawa abschalten" />
                         {/if}
 
                         <label textWrap="true" class="text-md mt-4 italic" text="Diese Meldung ist als Info anzusehen und verschwindet nicht automatisch, da es keinen Weg gibt zu erkennen ob alle Maßnahmen durchgeführt worden sind. Wenn ein Alarm ankommt scheint es aber zu funktionieren :)" />
