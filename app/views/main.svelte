@@ -11,42 +11,23 @@
                 <label textWrap="true" class="text-sm font mt-2 text-right text-gray-500" text="Eingeloggt als {$user_profile.email}" />
                 <label text="Ausloggen" class="-mt-1 text-sm text-green text-right" on:tap="{doLogout}" />
                 {/if}
+
+                
+                {#if checkDevice()|| isBackgroundRestricted || !hasDnDPermission || !isDnDBypassed || (activityRecognitionAvailable && !permissionsGranted)}
                 <label textWrap="true" class="text-xl font-medium mt-6" text="Einrichtung der App" />
                 
-                <label textWrap="true" class="text-md mt-4" text="Bitte beachte die folgenden Hinweise, um ein möglichst reibungsloses Funktionieren der App zu garantieren:" />
+                <label textWrap="true" class="text-md mt-4" text="Bitte beachten Sie die folgenden Hinweise, um ein möglichst reibungsloses Funktionieren der App zu garantieren:" />
+                {/if}
                 
-                
-                {#if checkDevice()}
+                {#if isBackgroundRestricted}
                 <stackLayout class="my-4 p-4 bg-red rounded-lg text-white" on:tap="{()=>{toggleTab(0)}}">
                     <flexboxLayout alignItems="center">
                         <label class="text-lg font-medium bg-white rounded-full w-7 h-7 text-red text-center" text="1" />
-                        <label class="ml-2 text-md font-medium text-white " text="Hersteller spezifische Probleme lösen" />
+                        <label class="ml-2 text-md font-medium text-white " text="Optimierungen für Brawa deaktivieren" />
                     </flexboxLayout>
                     {#if setupTabOpen==0}
-                        <label textWrap="true" class="text-md mt-4">
-                            <formattedString>
-                                <span text="Bei {Device.manufacturer} Handys ist es bekannt, dass Apps oft " />
-                                <span text="keine Benachrichtigungen" fontWeight="bold" />
-                                <span text=" empfangen können." />
-                            </formattedString>
-                        </label>
-                        
-                        <label textWrap="true" class="text-md mt-4">
-                            <formattedString>
-                                <span text="Bitte befolge daher die Tipps auf der folgenden " />
-                                <span text="Seite, um die Optimierungen für die Brawa App" fontWeight="bold" />
-                                <span text=" abzuschalten. Ansonsten kann es passieren, dass keine Alarme durchkommen!" />
-                            </formattedString>
-                        </label>
-
-                        <button on:tap="{Utils.openUrl(helpLink)}" class="text-md text-white bg-red-800 my-0 w-full" text="Infos zur Problemlösung öffnen" />
-
-                        {#if isBackgroundRestricted}
-                            <label textWrap="true" class="text-md mt-4" text="Außerdem scheint die Akku Optimierung laut Google für die App aktiv zu sein. Bitte in den Einstellungen deaktivieren" />
-                            <button on:tap={openAppSettings} class="text-md text-white bg-red-800 my-0 w-full" text="Akku Optimierungen für Brawa abschalten" />
-                        {/if}
-
-                        <label textWrap="true" class="text-md mt-4 italic" text="Diese Meldung ist als Info anzusehen und verschwindet nicht automatisch, da es keinen Weg gibt zu erkennen ob alle Maßnahmen durchgeführt worden sind. Wenn ein Alarm ankommt scheint es aber zu funktionieren :)" />
+                        <label textWrap="true" class="text-md mt-4" text="Die Akku Optimierung ist für die App aktiv. Dies kann das Empfangen von Alarmen beeinflußen. Bitte in den Einstellungen unter 'Akku' deaktivieren." />
+                        <button on:tap={openAppSettings} class="text-md text-white bg-red-800 my-0 w-full" text="Akku Optimierungen für Brawa abschalten" />
                     {/if}
                 </stackLayout>
                 {/if}
@@ -54,7 +35,7 @@
                 {#if !hasDnDPermission || !isDnDBypassed}
                 <stackLayout class="my-4 p-4 bg-orange rounded-lg text-white" on:tap="{()=>{toggleTab(1)}}">
                     <flexboxLayout alignItems="center">
-                        <label class="text-lg font-medium bg-white rounded-full w-7 h-7 text-red-800 text-center" text="{(checkDevice()&1)+1}" />
+                        <label class="text-lg font-medium bg-white rounded-full w-7 h-7 text-red-800 text-center" text="{(isBackgroundRestricted&1)+1}" />
                         <label class="ml-2 text-md font-medium text-white " text="Stummschaltung ignorieren" />
                     </flexboxLayout>
                     {#if setupTabOpen==1}
@@ -73,15 +54,47 @@
                 {#if activityRecognitionAvailable && !permissionsGranted}
                 <stackLayout class="my-4 p-4 bg-yellow-400 rounded-lg text-white" on:tap="{()=>{toggleTab(2)}}">
                     <flexboxLayout alignItems="center">
-                        <label class="text-lg font-medium bg-white rounded-full w-7 h-7 text-yellow-800 text-center" text="{(checkDevice()&1)+(!isDnDBypassed & 1)+1}" />
+                        <label class="text-lg font-medium bg-white rounded-full w-7 h-7 text-yellow-800 text-center" text="{(isBackgroundRestricted&1)+(!isDnDBypassed & 1)+1}" />
                         <label class="ml-2 text-md font-medium text-white " text="Schrittzähler Berechtigung erteilen" />
                     </flexboxLayout>
                     {#if setupTabOpen==2}
-                    <label textWrap="true" class="text-md my-4" text="Sobald ein Alarm ausgelöst und geöffnet wird, versucht die App die zurückgelegte Strecke in Schritten zu zählen. Dies funktioniert auf Android jedoch nur mit deiner ausdrücklichen Zustimmung." />
+                    <label textWrap="true" class="text-md my-4" text="Sobald ein Alarm ausgelöst und geöffnet wird, versucht die App die zurückgelegte Strecke in Schritten zu zählen. Dies funktioniert auf Android jedoch nur mit Ihrer ausdrücklichen Zustimmung." />
                     <button on:tap="{requestStepPermissions}" class="text-md text-white bg-yellow-600 my-0 w-full" text="Berechtigungen erlauben" />
                     {/if}
                 </stackLayout>
                 {/if}
+
+                {#if checkDevice()}
+                <stackLayout class="my-4 p-4 bg-gray-700 rounded-lg text-white" on:tap="{()=>{toggleTab(3)}}">
+                    <flexboxLayout alignItems="center">
+                        <label class="text-lg font-medium bg-white rounded-full w-7 h-7 text-gray-700 text-center" text="{(isBackgroundRestricted&1)+(!isDnDBypassed & 1)+((activityRecognitionAvailable && !permissionsGranted) & 1)+1}" />
+                        <label class="ml-2 text-md font-medium text-white " text="Hersteller spezifische Probleme lösen" />
+                    </flexboxLayout>
+                    {#if setupTabOpen==3}
+                        <label textWrap="true" class="text-md mt-4">
+                            <formattedString>
+                                <span text="Bei {Device.manufacturer} Handys ist es bekannt, dass Apps oft " />
+                                <span text="keine Benachrichtigungen" fontWeight="bold" />
+                                <span text=" empfangen können." />
+                            </formattedString>
+                        </label>
+                        
+                        <label textWrap="true" class="text-md mt-4">
+                            <formattedString>
+                                <span text="Bitte befolgen Sie daher die Tipps auf der folgenden " />
+                                <span text="Seite, um die Optimierungen für die Brawa App" fontWeight="bold" />
+                                <span text=" abzuschalten. Ansonsten kann es passieren, dass keine Alarme durchkommen!" />
+                            </formattedString>
+                        </label>
+
+                        <button on:tap="{Utils.openUrl(helpLink)}" class="text-md text-white bg-gray-800 my-0 w-full" text="Infos zur Problemlösung öffnen" />
+
+
+                        <label textWrap="true" class="text-md mt-4 italic" text="Aus technischen Gründen bleibt dieser Teil der Anleitung zu den Berechtigungen stehen. Dadurch ist die Funktionsweise der App nicht beeinträchtigt!" />
+                    {/if}
+                </stackLayout>
+                {/if}
+                
 
                 
             </stackLayout>
@@ -178,8 +191,7 @@
     }
 
     function checkDevice() {
-        const affectedManufacturer = listOfAffectedManufacturers.includes(Device.manufacturer.toLowerCase());
-        return affectedManufacturer;
+        return listOfAffectedManufacturers.includes(Device.manufacturer.toLowerCase());
     }
 
     function generateDKMALink(){

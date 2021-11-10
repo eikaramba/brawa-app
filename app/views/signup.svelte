@@ -6,9 +6,8 @@
                 <svgimage src="~/images/logo.svg" width="100%" height="46" margin="18 0 32" />
                 <label textWrap="true" class="text-white text-center text-lg">
                     <formattedString>
-                        <span text="Mit dieser App bist du Teil des " />
-                        <span text="BRAWA Projektes zur frühen Bekämpfung von Bränden" fontWeight="bold" />
-                        <span text="! Du musst dich mit deiner PsyWeb E-Mail einloggen ." />
+                        <span text="Mit dieser App sind Sie Teil des " />
+                        <span text="BRAWA Projektes zur frühen Bekämpfung von Bränden!" fontWeight="bold" />
                     </formattedString>
                 </label>
                 </stackLayout>

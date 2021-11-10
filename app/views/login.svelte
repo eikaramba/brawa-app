@@ -6,7 +6,7 @@
                     <svgimage src="~/images/logo.svg" width="100%" height="46" margin="18 0 32" />
                 <label textWrap="true" class="text-white text-center text-lg">
                     <formattedString>
-                        <span text="Mit dieser App bist du Teil des " />
+                        <span text="Mit dieser App sind Sie Teil des " />
                         <span text="BRAWA Projektes zur frühen Bekämpfung von Bränden!" fontWeight="bold" />
                     </formattedString>
                 </label>
@@ -17,7 +17,7 @@
 
             <stackLayout row="1" class="px-8 pt-4" verticalAlignment="center" >
 
-                <label textWrap="true" class="text-md" text="Bitte gib deine bei PsyWeb hinterlegte E-Mail ein, um die App zu aktivieren" />
+                <label textWrap="true" class="text-md" text="Bitte geben Sie Ihre bei PsyWeb hinterlegte E-Mail ein, um die App zu aktivieren" />
                 <textField class="input border-gray-300" hint="E-Mail" keyboardType="email" autocorrect="false" autocapitalizationType="none"
                     bind:text="{email}" returnKeyType="next" editable="{!isLoading}"/>
                     
