@@ -138,6 +138,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 				mobilemode = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
 				oldvolume  = mobilemode.getStreamVolume(AudioManager.STREAM_RING);
 				mobilemode.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+				if(!mobilemode.isWiredHeadsetOn())
 				mobilemode.setStreamVolume(AudioManager.STREAM_RING,mobilemode.getStreamMaxVolume(AudioManager.STREAM_RING),0);
 			}
 
@@ -150,7 +151,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 			int finalOldvolume = oldvolume;
 			new Thread(() -> {
 				try {
-					Thread.sleep(5000);
+					Thread.sleep(30000);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
