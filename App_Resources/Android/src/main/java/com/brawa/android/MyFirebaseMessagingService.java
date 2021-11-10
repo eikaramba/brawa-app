@@ -108,20 +108,24 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     if (am == null)
         return false;
 
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-        return am.isWiredHeadsetOn() || am.isBluetoothScoOn() || am.isBluetoothA2dpOn();
-    } else {
-        AudioDeviceInfo[] devices = am.getDevices(AudioManager.GET_DEVICES_OUTPUTS);
+	try {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+			return am.isWiredHeadsetOn() || am.isBluetoothScoOn() || am.isBluetoothA2dpOn();
+		} else {
+			AudioDeviceInfo[] devices = am.getDevices(AudioManager.GET_DEVICES_OUTPUTS);
 
-        for (AudioDeviceInfo device : devices) {
-            if (device.getType() == AudioDeviceInfo.TYPE_WIRED_HEADSET
-                    || device.getType() == AudioDeviceInfo.TYPE_WIRED_HEADPHONES
-                    || device.getType() == AudioDeviceInfo.TYPE_BLUETOOTH_A2DP
-                    || device.getType() == AudioDeviceInfo.TYPE_BLUETOOTH_SCO) {
-                return true;
-            }
-        }
-    }
+			for (AudioDeviceInfo device : devices) {
+				if (device.getType() == AudioDeviceInfo.TYPE_WIRED_HEADSET
+						|| device.getType() == AudioDeviceInfo.TYPE_WIRED_HEADPHONES
+						|| device.getType() == AudioDeviceInfo.TYPE_BLUETOOTH_A2DP
+						|| device.getType() == AudioDeviceInfo.TYPE_BLUETOOTH_SCO) {
+					return true;
+				}
+			}
+		}
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
     return false;
 }
 
@@ -152,23 +156,26 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 				.setLights(Color.RED, 1000, 300)
 				.setSmallIcon(R.drawable.notification_icon);
 
-			NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-			boolean hasDnDPermission = notificationManager.isNotificationPolicyAccessGranted();
-			int oldvolume=1;
-			boolean changedVolume=false;
-			AudioManager am = null;
-			if(hasDnDPermission) {
-				notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL);
-				am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-				oldvolume  = am.getStreamVolume(AudioManager.STREAM_RING);
-				am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-				if(!isHeadsetOn(am)){
-					am.setStreamVolume(AudioManager.STREAM_RING,am.getStreamMaxVolume(AudioManager.STREAM_RING),0);
-					changedVolume=true;
+			try {
+				NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+				boolean hasDnDPermission = notificationManager.isNotificationPolicyAccessGranted();
+				int oldvolume=1;
+				boolean changedVolume=false;
+				AudioManager am = null;
+				if(hasDnDPermission) {
+					notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL);
+					am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+					oldvolume  = am.getStreamVolume(AudioManager.STREAM_RING);
+					am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+					if(!isHeadsetOn(am)){
+						am.setStreamVolume(AudioManager.STREAM_RING,am.getStreamMaxVolume(AudioManager.STREAM_RING),0);
+						changedVolume=true;
+					}
 				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 
-			assert notificationManager != null;
 			notificationManager.notify(0, notificationBuilder.build());
 
 			setReceivedTime(alarmId);
