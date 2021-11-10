@@ -179,16 +179,6 @@
 
     function checkDevice() {
         const affectedManufacturer = listOfAffectedManufacturers.includes(Device.manufacturer.toLowerCase());
-        if (global.isAndroid && Device.sdkVersion >= '28') {
-            try {
-                const context = Utils.ad.getApplicationContext();
-                const activityManager = context.getSystemService(android.content.Context.ACTIVITY_SERVICE);
-                isBackgroundRestricted = activityManager.isBackgroundRestricted();
-                // return affectedManufacturer && activityManager.isBackgroundRestricted();
-            } catch (err) {
-                console.log(err);
-            }
-        }
         return affectedManufacturer;
     }
 
@@ -332,6 +322,16 @@
         const channel2 = manager.getNotificationChannel("AlarmB");
         isDnDBypassed = channel1.canBypassDnd() && channel2.canBypassDnd()
         hasDnDPermission = manager.isNotificationPolicyAccessGranted();
+        
+        if (global.isAndroid && Device.sdkVersion >= '28') {
+            try {
+                const context = Utils.ad.getApplicationContext();
+                const activityManager = context.getSystemService(android.content.Context.ACTIVITY_SERVICE);
+                isBackgroundRestricted = activityManager.isBackgroundRestricted();
+            } catch (err) {
+                console.log(err);
+            }
+        }
     }
      async function registerOrUpdateToken(newfcmToken){
         try {

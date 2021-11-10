@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import androidx.core.app.NotificationCompat;
 import android.media.AudioManager;
+import android.media.AudioDeviceInfo;
 import android.util.Log;
 import com.tns.NativeScriptActivity;
 
@@ -102,6 +103,28 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 		}
 	}
 
+	private boolean isHeadsetOn(AudioManager am) {
+
+    if (am == null)
+        return false;
+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+        return am.isWiredHeadsetOn() || am.isBluetoothScoOn() || am.isBluetoothA2dpOn();
+    } else {
+        AudioDeviceInfo[] devices = am.getDevices(AudioManager.GET_DEVICES_OUTPUTS);
+
+        for (AudioDeviceInfo device : devices) {
+            if (device.getType() == AudioDeviceInfo.TYPE_WIRED_HEADSET
+                    || device.getType() == AudioDeviceInfo.TYPE_WIRED_HEADPHONES
+                    || device.getType() == AudioDeviceInfo.TYPE_BLUETOOTH_A2DP
+                    || device.getType() == AudioDeviceInfo.TYPE_BLUETOOTH_SCO) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 	private void sendNotification(int alarmId, String template) {
 		try {
 			JSONObject json = new JSONObject(template);
@@ -133,14 +156,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 			boolean hasDnDPermission = notificationManager.isNotificationPolicyAccessGranted();
 			int oldvolume=1;
 			boolean changedVolume=false;
-			AudioManager mobilemode = null;
+			AudioManager am = null;
 			if(hasDnDPermission) {
 				notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL);
-				mobilemode = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-				oldvolume  = mobilemode.getStreamVolume(AudioManager.STREAM_RING);
-				mobilemode.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-				if(!mobilemode.isWiredHeadsetOn()){
-					mobilemode.setStreamVolume(AudioManager.STREAM_RING,mobilemode.getStreamMaxVolume(AudioManager.STREAM_RING),0);
+				am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+				oldvolume  = am.getStreamVolume(AudioManager.STREAM_RING);
+				am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+				if(!isHeadsetOn(am)){
+					am.setStreamVolume(AudioManager.STREAM_RING,am.getStreamMaxVolume(AudioManager.STREAM_RING),0);
 					changedVolume=true;
 				}
 			}
@@ -150,7 +173,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 			setReceivedTime(alarmId);
 
-			AudioManager finalMobilemode = mobilemode;
+			AudioManager finalam = am;
 			int finalOldvolume = oldvolume;
 			if(changedVolume){
 				new Thread(() -> {
@@ -159,8 +182,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					if(hasDnDPermission && finalMobilemode!=null) {
-						finalMobilemode.setStreamVolume(AudioManager.STREAM_RING,finalOldvolume,0);
+					if(hasDnDPermission && finalam!=null) {
+						finalam.setStreamVolume(AudioManager.STREAM_RING,finalOldvolume,0);
 					}
 				}).start();
 			}
