@@ -132,14 +132,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 			NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 			boolean hasDnDPermission = notificationManager.isNotificationPolicyAccessGranted();
 			int oldvolume=1;
+			boolean changedVolume=false;
 			AudioManager mobilemode = null;
 			if(hasDnDPermission) {
 				notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL);
 				mobilemode = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
 				oldvolume  = mobilemode.getStreamVolume(AudioManager.STREAM_RING);
 				mobilemode.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-				if(!mobilemode.isWiredHeadsetOn())
-				mobilemode.setStreamVolume(AudioManager.STREAM_RING,mobilemode.getStreamMaxVolume(AudioManager.STREAM_RING),0);
+				if(!mobilemode.isWiredHeadsetOn()){
+					mobilemode.setStreamVolume(AudioManager.STREAM_RING,mobilemode.getStreamMaxVolume(AudioManager.STREAM_RING),0);
+					changedVolume=true;
+				}
 			}
 
 			assert notificationManager != null;
@@ -155,7 +158,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				if(hasDnDPermission && finalMobilemode!=null) {
+				if(changedVolume && hasDnDPermission && finalMobilemode!=null) {
 					finalMobilemode.setStreamVolume(AudioManager.STREAM_RING,finalOldvolume,0);
 				}
 			}).start();
