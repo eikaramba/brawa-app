@@ -156,12 +156,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 				.setLights(Color.RED, 1000, 300)
 				.setSmallIcon(R.drawable.notification_icon);
 
+			int oldvolume=1;
+			boolean changedVolume=false;
+			AudioManager am = null;
+			boolean hasDnDPermission=false;
+			NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 			try {
-				NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-				boolean hasDnDPermission = notificationManager.isNotificationPolicyAccessGranted();
-				int oldvolume=1;
-				boolean changedVolume=false;
-				AudioManager am = null;
+				hasDnDPermission = notificationManager.isNotificationPolicyAccessGranted();
 				if(hasDnDPermission) {
 					notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL);
 					am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
@@ -182,6 +183,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 			AudioManager finalam = am;
 			int finalOldvolume = oldvolume;
+			boolean finalhasDnDPermission = hasDnDPermission;
 			if(changedVolume){
 				new Thread(() -> {
 					try {
@@ -189,7 +191,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					if(hasDnDPermission && finalam!=null) {
+					if(finalhasDnDPermission && finalam!=null) {
 						finalam.setStreamVolume(AudioManager.STREAM_RING,finalOldvolume,0);
 					}
 				}).start();

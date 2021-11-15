@@ -94,8 +94,10 @@
                     {/if}
                 </stackLayout>
                 {/if}
-                
-
+            
+                <label textWrap="true" class="text-xl font-medium mt-6" text="Testalarm anhören" />
+                <label textWrap="true" class="mt-4 text-md " text="Um sicher zu gehen das alles funktioniert und um den Alarm einmal anzuhören, können Sie sich selbst einen Alarm per Knopfdruck erstellen lassen." />
+                <button on:tap="{createTestAlarm}" class="text-md text-white bg-gray-800 mt-2 icon" text="{mdi['alarm-add']} Alarm in 10 Sekunden erzeugen" />
                 
             </stackLayout>
             {/await}
@@ -118,6 +120,7 @@
     import { crashlytics } from "@nativescript/firebase/crashlytics";
     const permissions = require( "nativescript-permissions" );
     import { createAndroidNotificationChannel } from "../android-notification";
+    import { mdi } from '~/utils/icons'
     
 
     let statusBarHeight=0;
@@ -357,6 +360,11 @@
                 const toast = new Toasty({ text: `Fehler: "${err}"` }).setToastDuration(ToastDuration.LONG);
                 toast.show();
             }
+     }
+
+     async function createTestAlarm(){
+        await client.post(`/alarms/test`,{ });
+        (new Toasty({ text: `Bitte die App jetzt schließen und auf den Alarm warten` }).setToastDuration(ToastDuration.SHORT)).show();
      }
 
 
