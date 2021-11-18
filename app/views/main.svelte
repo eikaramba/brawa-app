@@ -65,15 +65,15 @@
                 {/if}
 
                 {#if checkDevice()}
-                <stackLayout class="my-4 p-4 bg-gray-700 rounded-lg text-white" on:tap="{()=>{toggleTab(3)}}">
+                <stackLayout class="mt-4 p-4 bg-gray-700 rounded-lg text-white" on:tap="{()=>{toggleTab(3)}}">
                     <flexboxLayout alignItems="center">
                         <label class="text-lg font-medium bg-white rounded-full w-7 h-7 text-gray-700 text-center" text="{(isBackgroundRestricted&1)+(!isDnDBypassed & 1)+((activityRecognitionAvailable && !permissionsGranted) & 1)+1}" />
-                        <label class="ml-2 text-md font-medium text-white " text="Hersteller spezifische Probleme lösen" />
+                        <label class="ml-2 text-md font-medium text-white " text="Herstellerspezifische Probleme lösen" />
                     </flexboxLayout>
                     {#if setupTabOpen==3}
                         <label textWrap="true" class="text-md mt-4">
                             <formattedString>
-                                <span text="Bei {Device.manufacturer} Handys ist es bekannt, dass Apps oft " />
+                                <span text="Bei {Device.manufacturer}-Smartphones ist es bekannt, dass Apps oft " />
                                 <span text="keine Benachrichtigungen" fontWeight="bold" />
                                 <span text=" empfangen können." />
                             </formattedString>
@@ -81,22 +81,22 @@
                         
                         <label textWrap="true" class="text-md mt-4">
                             <formattedString>
-                                <span text="Bitte befolgen Sie daher die Tipps auf der folgenden " />
-                                <span text="Seite, um die Optimierungen für die Brawa App" fontWeight="bold" />
-                                <span text=" abzuschalten. Ansonsten kann es passieren, dass keine Alarme durchkommen!" />
+                                <span text="Sollte dieses Problem bei Ihnen auftreten, befolgen Sie bitte die " />
+                                <span text="Tipps auf der folgenden Seite." fontWeight="bold" />
                             </formattedString>
                         </label>
 
                         <button on:tap="{Utils.openUrl(helpLink)}" class="text-md text-white bg-gray-800 my-0 w-full" text="Infos zur Problemlösung öffnen" />
 
 
-                        <label textWrap="true" class="text-md mt-4 italic" text="Aus technischen Gründen bleibt dieser Teil der Anleitung zu den Berechtigungen stehen. Dadurch ist die Funktionsweise der App nicht beeinträchtigt!" />
                     {/if}
                 </stackLayout>
+                <label textWrap="true" class="text-sm mb-4 italic" text="Aus technischen Gründen bleibt diese Anweisung auch nach der Erteilung der Berechtigungen stehen. Dadurch ist die Funktionsweise der App nicht zwangsläufig  beeinträchtigt!" />
+                    
                 {/if}
             
                 <label textWrap="true" class="text-xl font-medium mt-6" text="Testalarm anhören" />
-                <label textWrap="true" class="mt-4 text-md " text="Um sicher zu gehen das alles funktioniert und um den Alarm einmal anzuhören, können Sie sich selbst einen Alarm per Knopfdruck erstellen lassen." />
+                <label textWrap="true" class="mt-4 text-md " text="Um sicherzugehen, dass alles funktioniert und um den Alarm einmal anzuhören, können Sie sich selbst einen Alarm per Knopfdruck erstellen lassen." />
                 <button on:tap="{createTestAlarm}" class="text-md text-white bg-gray-800 mt-2 icon" text="{mdi['alarm-add']} Alarm in 10 Sekunden erzeugen" />
                 
             </stackLayout>
@@ -132,6 +132,7 @@
     let hasDnDPermission=false;
     let isBackgroundRestricted=false;
     let activityResumedEventListening=false;
+    let FCMTokenReceived=false;
     const listOfAffectedManufacturers = [
         "samsung",
         "xiaomi",
@@ -265,20 +266,27 @@
             console.log(err)
         }
 
-        firebase.init({
-            showNotifications: false,
-            showNotificationsWhenInForeground: false,
+        try {
+            await firebase.init({
+                showNotifications: false,
+                showNotificationsWhenInForeground: false,
 
-            onPushTokenReceivedCallback: async (fcmToken) => {
+                onPushTokenReceivedCallback: async (fcmToken) => {
                     console.log('[Firebase] onPushTokenReceivedCallback:', { fcmToken });
                     await registerOrUpdateToken(fcmToken);
-            }
-        })
-        .catch(error => {
+                }
+            })
+        }catch(error) {
             console.log('[Firebase] Initialize', { error });
-            crashlytics.sendCrashLog(new java.lang.Exception("[Firebase] Initialize failed: "+JSON.stringify(error)));
-        });
-     
+            if(error=="Firebase already initialized"){
+                console.log("manually getting token")
+                firebase.getCurrentPushToken().then(async (fcmtoken) => {
+                    console.log('[Firebase] getCurrentPushToken:', { fcmtoken });
+                    await registerOrUpdateToken(fcmtoken);
+                });
+            }else
+                crashlytics.sendCrashLog(new java.lang.Exception("[Firebase] Initialize failed: "+JSON.stringify(error)));
+        }
 
         if(!activityResumedEventListening) {
             Application.android.on(
@@ -349,17 +357,20 @@
         }
     }
      async function registerOrUpdateToken(newfcmToken){
+        if(FCMTokenReceived) return;
+        FCMTokenReceived=true;
         try {
-                if($user_profile.fcmToken!=newfcmToken){
-                    console.log(`update old token ${$user_profile.fcmToken} with new token ${newfcmToken}`);
-                    await client.put(`/users/${$user_profile.id}`,{
-                            fcmToken:newfcmToken
-                    });
-                }
-            } catch (err) {
-                const toast = new Toasty({ text: `Fehler: "${err}"` }).setToastDuration(ToastDuration.LONG);
-                toast.show();
+            if($user_profile.fcmToken!=newfcmToken){
+                console.log(`update old token ${$user_profile.fcmToken} with new token ${newfcmToken}`);
+                await client.put(`/users/${$user_profile.id}`,{
+                        fcmToken:newfcmToken
+                });
             }
+        } catch (err) {
+            const toast = new Toasty({ text: `Fehler: "${err}"` }).setToastDuration(ToastDuration.LONG);
+            toast.show();
+        }
+        setTimeout(()=>{FCMTokenReceived=false;},5000);
      }
 
      async function createTestAlarm(){

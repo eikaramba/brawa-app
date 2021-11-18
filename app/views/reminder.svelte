@@ -20,6 +20,7 @@
     import { onMount } from 'svelte'
     import { client } from '~/lib/client'
     import FirstModule from './alarm/module.svelte'
+	import { navigate } from 'svelte-native'
 
 
     let statusBarHeight=0;
@@ -33,7 +34,7 @@
 
         try {
             template = await client.get(`/templates/${template.id}`);
-            nextPageProps = {id,template};
+            nextPageProps = {id,template,moduleStep:0};
             if(template.randomisierte_module) {
                 // randomize modules and put the list as integers into an array
                 let randomArray = [];

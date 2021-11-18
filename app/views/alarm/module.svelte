@@ -94,7 +94,7 @@
         if(!components || !components.length) return true;
         const questions =components.filter(c => c.__component=='components.question');
         if(!questions.length) return true;
-        return questions.filter(c => c.answers.filter(a => a.selected).length>0).length>0
+        return questions.filter(c => c.answers.filter(a => a.selected).length==0).length==0
     }
     $: canContinue=canContinueFn(module.components);
 
