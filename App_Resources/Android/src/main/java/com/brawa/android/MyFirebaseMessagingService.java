@@ -36,11 +36,14 @@ import android.os.PowerManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+// import androidx.work.Data;
+// import androidx.work.OneTimeWorkRequest;
+// import androidx.work.WorkManager;
+
 
 import java.time.Instant;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
-	private int numMessages = 0;
 
 	@Override
 	public void onNewToken(String token) {
@@ -184,7 +187,18 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 			AudioManager finalam = am;
 			int finalOldvolume = oldvolume;
 			boolean finalhasDnDPermission = hasDnDPermission;
+
+
+
 			if(changedVolume){
+					// WorkManager.getInstance(this).enqueue(
+			 		// new OneTimeWorkRequest.Builder(ResetVolumeWorker.class)
+			 		// 		.setInitialDelay(30, TimeUnit.SECONDS)
+			 		// 		.setInputData(new Data.Builder()
+			 		// 				.putInt("oldvolume", finalOldvolume)
+			 		// 				.putBoolean("hasDnDPermission", finalhasDnDPermission)
+			 		// 				.build())
+			 		// 		.build());
 				new Thread(() -> {
 					try {
 						Thread.sleep(30000);
@@ -205,3 +219,24 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 		}
 	}
 }
+
+// class ResetVolumeWorker extends Worker {
+// 	@NonNull
+// 	@Override
+// 	public WorkerResult doWork() {
+// 		Data inputData = getInputData();
+// 		int oldvolume = inputData.getInt("oldvolume",1);
+// 		boolean changedVolume = inputData.getBoolean("changedVolume",false);
+// 		boolean hasDnDPermission = inputData.getBoolean("hasDnDPermission",false);
+// 		AudioManager am = null;
+// 		try {
+// 			if(hasDnDPermission) {
+// 				am = (AudioManager)getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+// 				am.setStreamVolume(AudioManager.STREAM_RING,oldvolume,0);
+// 			}
+// 		} catch (Exception e) {
+// 			e.printStackTrace();
+// 		}
+// 		return WorkerResult.SUCCESS;
+// 	}
+// }
