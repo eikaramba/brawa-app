@@ -2,6 +2,7 @@ import { writable,  get } from 'svelte/store';
 import { client } from '../lib/client'
 import { getString,setString,remove } from '@nativescript/core/application-settings'
 import { User } from '~/models/user';
+import { clearCookies } from "@klippa/nativescript-http";
 
 function buildUserTokenStore() {
     var stored_token = getString('user_token', null);
@@ -43,6 +44,7 @@ export const user_profile = buildUserProfileStore();
 export function logout() {
     user_profile.set(null);
     user_token.set(null);
+    clearCookies();
 }
 
 function getCookie(string, key) {

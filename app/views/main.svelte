@@ -8,9 +8,9 @@
             {:then}
             <stackLayout height="100%" paddingTop="{statusBarHeight}px">
                 {#if $user_profile}
-                <label textWrap="true" class="text-sm font mt-2 text-right text-gray-500" text="Eingeloggt als {$user_profile.email}" />
-                <label text="Ausloggen" class="-mt-1 text-sm text-green text-right" on:tap="{doLogout}" />
+                    <label textWrap="true" class="text-sm font mt-2 text-right text-gray-500" text="Eingeloggt als {$user_profile.email}" />
                 {/if}
+                <label text="Ausloggen" class="-mt-1 text-sm text-green text-right" on:tap="{doLogout}" />
 
                 
                 {#if checkDevice()|| isBackgroundRestricted || !hasDnDPermission || !isDnDBypassed || (activityRecognitionAvailable && !permissionsGranted)}
@@ -248,7 +248,12 @@
         console.log("starting app with ", $user_profile, $user_token);
         if (!$user_profile) {
             console.log("load user profile");
-            await user_profile.loadUserFromToken();
+            try {
+                await user_profile.loadUserFromToken();
+            } catch (err) {}
+            if (!$user_profile) {
+                return doLogout();
+            }
             console.log("profile loaded from server:", $user_profile);
         }
         try {
