@@ -26,12 +26,12 @@
                 <activityIndicator busy="{isLoading}" horizontalAlignment="center" verticalAlignment="center" class="activity-indicator" />
             </stackLayout>
 
-            <label row="2" class="sign-up-label text-gray-400 text-sm" on:tap="{register}" horizontalAlignment="center">
+            <!-- <label row="2" class="sign-up-label text-gray-400 text-sm" on:tap="{register}" horizontalAlignment="center">
                 <formattedString>
                     <span text="Noch keinen Account?"/>
                     <span text=" Jetzt registrieren" fontWeight="bold" />
                 </formattedString>
-            </label>
+            </label> -->
 
         </gridLayout>
     </scrollView>
