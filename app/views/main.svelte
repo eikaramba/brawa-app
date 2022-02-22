@@ -172,7 +172,7 @@
     function doLogout() {
         logout();
         navigate(
-            { page: Login }
+            { page: Login, clearHistory: true  }
         );
     }
     function requestDnDPermissions(){
