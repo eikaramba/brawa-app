@@ -148,6 +148,8 @@
 
             if(results.length>0)
             await client.post(`/alarms/${id}/moduleResults/${moduleStep}`,{moduleId:module.id,submitted_at:new Date(),results});
+            else
+            await client.post(`/alarms/${id}/moduleResults/${moduleStep}`,{moduleId:module.id,submitted_at:new Date()});
     
             if(template.modules.length>moduleStep+1)
             navigate({ page: NextModule, props:{id,template,moduleStep:moduleStep+1,moduleSteps} });

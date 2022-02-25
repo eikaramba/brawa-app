@@ -36,7 +36,8 @@
         await client.put(`/alarms/${id}`,{confirmed_at:new Date()});
 
     })
-    function next(){
+    async function next(){
+        await client.put(`/alarms/${id}`,{pageTwoFinished_at:new Date()});
         navigate({ page: FirstModule, props:{id,template,moduleStep:0,moduleSteps} });
     }
 </script>
