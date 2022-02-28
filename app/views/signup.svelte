@@ -3,7 +3,7 @@
         <gridLayout class="layout page ns-light"  rows="auto, *, auto" >
             <stackLayout row="0" paddingTop="12" class="bg-blue text-white" verticalAlignment="center" >
                 <stackLayout padding="0 24" verticalAlignment="center" >
-                <svgimage src="~/images/logo.svg" width="100%" height="46" margin="18 0 32" />
+                <svgview src="~/images/logo.svg" width="100%" height="46" margin="18 0 32" />
                 <label textWrap="true" class="text-white text-center text-lg">
                     <formattedString>
                         <span text="Mit dieser App sind Sie Teil des " />

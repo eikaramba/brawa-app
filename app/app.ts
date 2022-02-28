@@ -76,7 +76,7 @@ if (isAndroid) {
 }
 
 
-registerNativeViewElement("svgimage", () => require('@sergeymell/nativescript-svg').SVGImage);
+registerNativeViewElement("svgview", () => require('@nativescript-community/ui-svg').SVGView);
 
 Theme.setMode(Theme.Light);
 
@@ -87,7 +87,7 @@ Theme.setMode(Theme.Light);
 //     template:
 //       {
 //         id:1,
-//         layout:'ampelA',
+//         layout:'ampelB',
 //         brandwahrscheinlichkeit:45,
 //         callToAction_text:'<h1 style="text-align:center;">Bitte <span style="color:#FF9D33;">geh </span>in den nächsten Raum</h1><h2 style="text-align:center;">überschrift 2</h2><h3 style="text-align:center;">überschrift 3</h3><p style="text-align:center;">normaler text</p><p style="text-align:center;"><span style="color:#EF4444;"><strong><u>Jetzt sofort!</u></strong></span></p>',
 //         callToAction_button:'Hab ich gemacht',

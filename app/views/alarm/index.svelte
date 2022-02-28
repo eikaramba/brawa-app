@@ -20,17 +20,20 @@
 
                 {#if template.layout == 'ampelA'}
                     {#if template.brandwahrscheinlichkeit > 66}
-                        <svgimage width="100%" height="240"
+                        <svgview width="100%" height="240"
                         src="~/images/ampel-high.svg"/>
                     {:else if template.brandwahrscheinlichkeit > 33}
-                        <svgimage width="100%" height="240"
+                        <svgview width="100%" height="240"
                             src="~/images/ampel-med.svg"/>
                     {:else }
-                        <svgimage width="100%" height="240"
+                        <svgview width="100%" height="240"
                             src="~/images/ampel-low.svg"/>
                     {/if}
                     <label textWrap="true" class="text-xs text-center w-full mt-4 text-gray-400" text="Brandwahrscheinlichkeit" />
                     <label style="font-size:36;" class="-mt-2 font-bold text-center w-full {template.brandwahrscheinlichkeit > 66?'text-red':template.brandwahrscheinlichkeit > 33?'text-orange':'text-yellow'}" text="{template.brandwahrscheinlichkeit} %" />
+                {:else if  template.layout == 'ampelB'}
+                <svgview width="100%" height="240"
+                            src="~/images/ampelB.svg"/>
                 {/if}
 
                 
