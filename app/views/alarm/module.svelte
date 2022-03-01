@@ -24,9 +24,7 @@
                                         horizontalAlignment="center"
                                         textWrap="true"
                                         text={getRadioIcon(answer.selected,component.multipleAnswersAllowed)}
-                                        class="text-lg  {answer.selected
-                                            ? 'fas text-green'
-                                            : 'far'}"
+                                        class="text-lg far"
                                         />
                                         <label
                                         verticalAlignment="center"
@@ -49,9 +47,7 @@
                                     verticalAlignment="center"
                                     textWrap="true"
                                     text={getRadioIcon(answer.selected,component.multipleAnswersAllowed)}
-                                    class="text-lg text-green {answer.selected
-                                        ? 'fas'
-                                        : 'far'}"
+                                    class="text-lg far"
                                     />
                                     <label
                                     verticalAlignment="center"
@@ -106,13 +102,13 @@
     function getRadioIcon(selected,multipleAnswersAllowed){
         if(multipleAnswersAllowed) {
             if(selected){
-                return String.fromCharCode(0xf14a);
+                return String.fromCharCode(0xf2d3);
             }else{
                 return String.fromCharCode(0xf0c8);
             }
         }else{
             if(selected){
-                return String.fromCharCode(0xf058);
+                return String.fromCharCode(0xf057);
             }else{
                 return String.fromCharCode(0xf111);
             }
