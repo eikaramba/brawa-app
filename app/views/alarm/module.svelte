@@ -1,9 +1,9 @@
-<page actionBarHidden="true">    <dockLayout stretchLastChild="true" class="page ns-light">
+<page actionBarHidden="true"  on:loaded="{pageLoaded}">    <dockLayout stretchLastChild="true" class="page ns-light">
     <stackLayout dock="bottom">
         <label text="{template.modules.length>moduleStep+1?'Weiter':'Fertig'}" on:tap="{next}" class="btn w-full bottombtn {canContinue?'bg-green text-white':'bg-gray-400 text-gray-600'}" marginTop="20"/>
     </stackLayout>
     <scrollView dock="top" >
-        <stackLayout class="" paddingTop="{statusBarHeight}px">
+        <stackLayout>
             {#each module.components as component,c}
                 {#if component.__component=='components.question'}
                     <label horizontalAlignment="left" textWrap="true" class="bg-blue text-md italic text-white my-4 py-2 pl-4 pr-12" text="{component.question}" />
@@ -74,13 +74,10 @@
 
 
 <script>
-    import {getStatusbarHeight} from '~/utils/helpers'
-    import { onMount } from 'svelte'
     import { client } from './../../lib/client'
     import { navigate } from 'svelte-native'
     import NextModule from './module'
 
-    let statusBarHeight=0;
     export let id;
     export let moduleStep;
     export let moduleSteps;
@@ -94,9 +91,13 @@
     }
     $: canContinue=canContinueFn(module.components);
 
-    onMount(async ()=>{
-        statusBarHeight = getStatusbarHeight();
-    })
+    function pageLoaded(args){ //needed so that view is scrollable, even if keyboard is visible
+        let page = args.object;
+        if (page.android) {
+            page.android.setFitsSystemWindows(true);
+        }
+    }
+
 
 
     function getRadioIcon(selected,multipleAnswersAllowed){
