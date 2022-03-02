@@ -1,10 +1,8 @@
 <page actionBarHidden="true">
     <dockLayout stretchLastChild="true" class="page ns-light">
-        {#if template.modules?.length>0}
-            <stackLayout dock="bottom">
-                <label text="Weiter" on:tap="{next}" class="btn bg-green text-white w-full bottombtn" marginTop="20"/>
-            </stackLayout>
-        {/if}
+        <stackLayout dock="bottom">
+            <label text="{template.modules?.length>0?'Weiter':'Fertig'}" on:tap="{next}" class="btn bg-green text-white w-full bottombtn" marginTop="20"/>
+        </stackLayout>
         <scrollView dock="top" >
             <stackLayout class="p-4" paddingTop="{statusBarHeight}px">
                 {#if template.fehlalarm}
@@ -38,6 +36,9 @@
     })
     async function next(){
         await client.put(`/alarms/${id}`,{pageTwoFinished_at:new Date()});
-        navigate({ page: FirstModule, props:{id,template,moduleStep:0,moduleSteps} });
+        if (template.modules?.length>0)
+            navigate({ page: FirstModule, props:{id,template,moduleStep:0,moduleSteps} });
+        else
+            android.os.Process.killProcess(android.os.Process.myPid());
     }
 </script>

@@ -16,7 +16,9 @@
 
         <scrollView dock="top" >
             <stackLayout class="p-4" paddingTop="{statusBarHeight+32}px">
+                {#if template.layout}
                 <label textWrap="true" class="text-lg text-center font-bold w-full mb-6" text="Sensoren melden Brandgefahr!" />
+                {/if}
 
                 {#if template.layout == 'ampelA'}
                     {#if template.brandwahrscheinlichkeit > 66}
