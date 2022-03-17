@@ -59,7 +59,7 @@
                         {/each}
                     {/if}
                 {:else if component.__component=='components.textarea'}
-                    <htmlView class="m-4" html="{component.text}" />
+                    <webView class="m-4" src="{component.text}" />
                 {:else if component.__component=='components.textfield'}
                     <label horizontalAlignment="left" textWrap="true" class="bg-blue text-md italic text-white mt-4 py-2 pl-4 pr-12" text="{component.label}" />
                     <textField class="input border-gray-400 bg-gray-300 m-4 p-4 w-full" bind:text="{component.result}"/>
