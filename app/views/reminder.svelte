@@ -1,14 +1,11 @@
 <page actionBarHidden="true">
     <dockLayout stretchLastChild="true" class="page ns-light">
-        {#if template.modules?.length>0}
-            <stackLayout dock="bottom">
-                <label text="Weiter" on:tap="{next}" class="btn bg-green text-white w-full bottombtn" marginTop="20"/>
-            </stackLayout>
-        {/if}
+        <stackLayout dock="bottom">
+            <label text="{template?.modules?.length>0?'Weiter':'Fertig'}" on:tap="{next}" class="btn bg-green text-white w-full bottombtn" marginTop="20"/>
+        </stackLayout>
         <scrollView dock="top" >
             <stackLayout class="p-4" paddingTop="{statusBarHeight}px">
-                <label textWrap="true" class="text-md" text="Infos Über die App" />
-
+                <webView src={template.callToAction_text} class="mt-8 w-full bg-page"/>
             </stackLayout>
         </scrollView>
     </dockLayout>
@@ -54,7 +51,11 @@
     async function next(){
         try {
             await client.put(`/alarms/${id}`,{confirmed_at:new Date()});
-            navigate({ page: FirstModule, props:nextPageProps });
+
+            if(template.modules.length>0)
+                navigate({ page: FirstModule, props:nextPageProps });
+            else
+                android.os.Process.killProcess(android.os.Process.myPid());
         } catch (err) {
             console.error(err);
         }

@@ -40,6 +40,12 @@ if (isAndroid) {
           soundFilename: "alarmb",
         });
         createAndroidNotificationChannel({
+          id: "AlarmC",
+          name: "Alarmtyp C",
+          description: "Wird ausgelöst bei potentielle Brandgefahren",
+          soundFilename: "alarmc",
+        });
+        createAndroidNotificationChannel({
           id: "reminder",
           name: "Erinnerungen",
           description: "Zur Erinnerung an die Funktionsweise der App"
