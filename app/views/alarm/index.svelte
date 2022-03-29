@@ -16,9 +16,6 @@
 
         <scrollView dock="top" >
             <stackLayout class="p-4" paddingTop="{statusBarHeight+32}px">
-                {#if template.layout}
-                <label textWrap="true" class="text-lg text-center font-bold w-full mb-6" text="Sensoren melden Brandgefahr!" />
-                {/if}
 
                 {#if template.layout == 'ampelA'}
                     {#if template.brandwahrscheinlichkeit > 66}
@@ -34,7 +31,7 @@
                     <label textWrap="true" class="text-xs text-center w-full mt-4 text-gray-400" text="Brandwahrscheinlichkeit" />
                     <label style="font-size:36;" class="-mt-2 font-bold text-center w-full {template.brandwahrscheinlichkeit > 66?'text-red':template.brandwahrscheinlichkeit > 33?'text-orange':'text-yellow'}" text="{template.brandwahrscheinlichkeit} %" />
                 {:else if  template.layout == 'ampelB'}
-                <svgview width="100%" height="240"
+                <svgview width="100%" height="180"
                             src="~/images/ampelB.svg"/>
                 {/if}
 

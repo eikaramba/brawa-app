@@ -85,9 +85,14 @@
     let module = moduleSteps? template.modules[moduleSteps[moduleStep]]: template.modules[moduleStep];
     function canContinueFn(components){
         if(!components || !components.length) return true;
-        const questions =components.filter(c => c.__component=='components.question');
+        const questions =components.filter(c => c.__component=='components.question' || c.__component=='components.textfield');
         if(!questions.length) return true;
-        return questions.filter(c => c.answers.filter(a => a.selected).length==0).length==0
+        return questions.filter(c => {
+            if(c.__component=='components.question')
+                return c.answers.filter(a => a.selected).length==0;
+            else
+                return !c.result || c.result.length==0;
+        }).length==0
     }
     $: canContinue=canContinueFn(module.components);
 
