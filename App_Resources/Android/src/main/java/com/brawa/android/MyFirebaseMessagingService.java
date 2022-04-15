@@ -35,13 +35,17 @@ import java.io.IOException;
 import android.os.PowerManager;
 import org.json.JSONException;
 import org.json.JSONObject;
+import java.util.Calendar;
+import java.util.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 // import androidx.work.Data;
 // import androidx.work.OneTimeWorkRequest;
 // import androidx.work.WorkManager;
 
 
-import java.time.Instant;
+// import java.time.Instant;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -79,11 +83,20 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 	private void setReceivedTime(int alarmId) {
 		OkHttpClient client = new OkHttpClient();
 		JSONObject jsonObject = new JSONObject();
-		// String currentDateTimeString = DateFormat.getDateInstance().format(new Date());
-		Instant instant = Instant.now();
+		Date currentTime = Calendar.getInstance().getTime();
+		//substract 1 hour from currentTime
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(currentTime);
+		cal.add(Calendar.HOUR_OF_DAY, -1);
+		Date oneHourAgo = cal.getTime();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+		String strDate = sdf.format(oneHourAgo).replace(" ", "T") + "Z";
+		// Instant instant = Instant.now();
 
 		try {
-			jsonObject.put("received_at", instant.toString());
+			// Log.d("received_at instant", instant.toString());
+			Log.d("received_at strDate", strDate);
+			jsonObject.put("received_at", strDate);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
