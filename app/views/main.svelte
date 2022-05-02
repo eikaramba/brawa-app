@@ -316,18 +316,18 @@
                 activity.getIntent().removeExtra("alarmId"); 
                 activity.getIntent().removeExtra("templateJson"); 
                 const template = JSON.parse(templateJson);
-                try {
-                    setTimeout(()=>{
+                setTimeout(()=>{
+                    try {
                         if(template.reminder) {
                             navigate({ page: ReminderPage,props:{id:alarmId,template} });
                         }else{
                             navigate({ page: AlarmPage,props:{id:alarmId,template} });
                         }
-                    }, 50);
-                } catch (err) {
-                    console.log({err})
-                    crashlytics.sendCrashLog(new java.lang.Exception("error navigating to alarm: "+JSON.stringify(err)));
-                }
+                    } catch (err) {
+                        console.log({err})
+                        crashlytics.sendCrashLog(new java.lang.Exception("error navigating to alarm: "+JSON.stringify(err)));
+                    }
+                }, 100);
             }
         }else{
             checkPermissions();
