@@ -108,7 +108,7 @@
 <script>
     import { user_token, user_profile,logout } from '../store/user'
     import {getStatusbarHeight} from '~/utils/helpers'
-    import { onMount } from 'svelte'
+    import { onMount,tick } from 'svelte'
     import { firebase } from "@nativescript/firebase";
     import { client } from '~/lib/client'
     import { Device,Utils,Application,AndroidApplication,Frame } from '@nativescript/core';
@@ -266,6 +266,7 @@
         try {
             var activity = Application.android.foregroundActivity || Application.android.startActivity  
             console.log("created");
+            await tick(); // see https://github.com/halfnelson/svelte-native/issues/82
             handleAlarmsAndPermissions(activity)
         } catch (err) {
             console.log(err)
@@ -316,11 +317,13 @@
                 activity.getIntent().removeExtra("templateJson"); 
                 const template = JSON.parse(templateJson);
                 try {
-                    if(template.reminder) {
-                        navigate({ page: ReminderPage,props:{id:alarmId,template} });
-                    }else{
-                        navigate({ page: AlarmPage,props:{id:alarmId,template} });
-                    }
+                    setTimeout(()=>{
+                        if(template.reminder) {
+                            navigate({ page: ReminderPage,props:{id:alarmId,template} });
+                        }else{
+                            navigate({ page: AlarmPage,props:{id:alarmId,template} });
+                        }
+                    }, 50);
                 } catch (err) {
                     console.log({err})
                     crashlytics.sendCrashLog(new java.lang.Exception("error navigating to alarm: "+JSON.stringify(err)));

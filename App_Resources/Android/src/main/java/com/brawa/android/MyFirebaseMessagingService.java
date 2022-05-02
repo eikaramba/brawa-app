@@ -87,7 +87,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 		//substract 1 hour from currentTime
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(currentTime);
-		cal.add(Calendar.HOUR_OF_DAY, -1);
+		cal.add(Calendar.HOUR_OF_DAY, -2);
 		Date oneHourAgo = cal.getTime();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 		String strDate = sdf.format(oneHourAgo).replace(" ", "T") + "Z";
