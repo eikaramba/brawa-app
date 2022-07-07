@@ -19,7 +19,7 @@
 
                 <label textWrap="true" class="text-md" text="Bitte geben Sie Ihre bei PsyWeb hinterlegte E-Mail ein, um die App zu aktivieren" />
                 <textField class="input border-gray-300" hint="E-Mail" keyboardType="email" autocorrect="false" autocapitalizationType="none"
-                    bind:text="{email}" returnKeyType="next" editable="{!isLoading}"/>
+                    bind:text="{email}" returnKeyType="next" editable="{!isLoading}" on:returnPress={doLogin}/>
                     
                 <button isEnabled="{!!email&&!isLoading}" text="Aktivieren" on:tap="{doLogin}" class="btn {email?'bg-red':'bg-gray-400'}" marginTop="20"/>
 

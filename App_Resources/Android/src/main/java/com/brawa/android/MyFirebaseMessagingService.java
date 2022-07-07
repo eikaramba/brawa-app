@@ -40,6 +40,9 @@ import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
+//import uri
+import android.net.Uri;
+
 // import androidx.work.Data;
 // import androidx.work.OneTimeWorkRequest;
 // import androidx.work.WorkManager;
@@ -172,25 +175,41 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 				.setLights(Color.RED, 1000, 300)
 				.setSmallIcon(R.drawable.notification_icon);
 
+
 			int oldvolume=1;
 			boolean changedVolume=false;
 			AudioManager am = null;
 			boolean hasDnDPermission=false;
 			NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 			try {
-				hasDnDPermission = notificationManager.isNotificationPolicyAccessGranted();
-				if(hasDnDPermission) {
-					notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL);
+				if( Build.VERSION.SDK_INT >= 23 ) {
+					hasDnDPermission = notificationManager.isNotificationPolicyAccessGranted();
+					if(hasDnDPermission) {
+						notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL);
+					}
+				}
+				if( Build.VERSION.SDK_INT < 23 || hasDnDPermission) {
 					am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
 					oldvolume  = am.getStreamVolume(AudioManager.STREAM_RING);
+					
 					am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
 					if(!isHeadsetOn(am)){
 						am.setStreamVolume(AudioManager.STREAM_RING,am.getStreamMaxVolume(AudioManager.STREAM_RING),0);
+						am.setStreamVolume(AudioManager.STREAM_ALARM,am.getStreamMaxVolume(AudioManager.STREAM_ALARM),0);
 						changedVolume=true;
 					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
+			}
+			
+			if( Build.VERSION.SDK_INT < 26 ) {
+				Log.d("channelName", channelName);
+				Context context = getApplicationContext(); // or getBaseContext(), or getApplicationContext()
+				// int resId = context.getResources().getIdentifier("raw/" + channelName, null, context.getPackageName());
+				int resId = context.getResources().getIdentifier(channelName.toLowerCase(), "raw", context.getPackageName());
+				notificationBuilder.setSound(Uri.parse("android.resource://" + context.getPackageName()  + "/raw/" + resId), AudioManager.STREAM_ALARM);
+				// notificationBuilder.setSound(Uri.parse("android.resource://" + context.getPackageName()  + "/raw/" + R.raw.old), AudioManager.STREAM_ALARM);
 			}
 
 			notificationManager.notify(0, notificationBuilder.build());
@@ -218,7 +237,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					if(finalhasDnDPermission && finalam!=null) {
+					if((Build.VERSION.SDK_INT < 23 || finalhasDnDPermission) && finalam!=null) {
 						finalam.setStreamVolume(AudioManager.STREAM_RING,finalOldvolume,0);
 					}
 				}).start();

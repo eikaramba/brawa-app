@@ -13,7 +13,7 @@
                 <label text="Ausloggen" class="-mt-1 text-sm text-green text-right" on:tap="{doLogout}" />
 
                 
-                {#if checkDevice()|| isBackgroundRestricted || !hasDnDPermission || !isDnDBypassed || (activityRecognitionAvailable && !permissionsGranted)}
+                {#if checkDevice()|| isBackgroundRestricted || (Device.sdkVersion >= '23' && (!hasDnDPermission || !isDnDBypassed)) || (activityRecognitionAvailable && !permissionsGranted)}
                 <label textWrap="true" class="text-xl font-medium mt-6" text="Einrichtung der App" />
                 
                 <label textWrap="true" class="text-md mt-4" text="Bitte beachten Sie die folgenden Hinweise, um ein möglichst reibungsloses Funktionieren der App zu garantieren:" />
@@ -32,7 +32,7 @@
                 </stackLayout>
                 {/if}
 
-                {#if !hasDnDPermission || !isDnDBypassed}
+                {#if Device.sdkVersion >= '23' && (!hasDnDPermission || !isDnDBypassed)}
                 <stackLayout class="my-4 p-4 bg-orange rounded-lg text-white" on:tap="{()=>{toggleTab(1)}}">
                     <flexboxLayout alignItems="center">
                         <label class="text-lg font-medium bg-white rounded-full w-7 h-7 text-red-800 text-center" text="{(isBackgroundRestricted&1)+1}" />
@@ -266,8 +266,12 @@
         try {
             var activity = Application.android.foregroundActivity || Application.android.startActivity  
             console.log("created");
-            await tick(); // see https://github.com/halfnelson/svelte-native/issues/82
-            handleAlarmsAndPermissions(activity)
+            /*
+              you should be able to use them just fine; but need a full understanding of the NativeScript UI lifecycle
+              Frame and Page in particular are pretty weird components
+              The "loaded" event is very useful indeed, because that's when both the NativeScript (JavaScript) class instance has been added into the tree and more importantly its underlying native component has been loaded (specifically the event is fired on the latter – JS class instance gets inserted first, and the underlying native component gets inserted second). 
+             */
+            await handleAlarmsAndPermissions(activity)
         } catch (err) {
             console.log(err)
         }
@@ -305,7 +309,7 @@
             activityResumedEventListening = true;
         }
     })
-    function handleAlarmsAndPermissions(activity){
+    async function handleAlarmsAndPermissions(activity){
         var intentExtras = activity.getIntent().getExtras();
         if(intentExtras){
             let templateJson = activity.getIntent().getStringExtra("templateJson");
@@ -316,7 +320,7 @@
                 activity.getIntent().removeExtra("alarmId"); 
                 activity.getIntent().removeExtra("templateJson"); 
                 const template = JSON.parse(templateJson);
-                setTimeout(()=>{
+                await tick(); // see https://github.com/halfnelson/svelte-native/issues/82
                     try {
                         if(template.reminder) {
                             navigate({ page: ReminderPage,props:{id:alarmId,template} });
@@ -327,7 +331,6 @@
                         console.log({err})
                         crashlytics.sendCrashLog(new java.lang.Exception("error navigating to alarm: "+JSON.stringify(err)));
                     }
-                }, 100);
             }
         }else{
             checkPermissions();
