@@ -19,8 +19,6 @@ import { Application, isAndroid, AndroidApplication } from "@nativescript/core";
 import { createAndroidNotificationChannel } from "./android-notification";
 
 
-require("@nativescript/firebase").firebase;
-
 
 if (isAndroid) {
   try {

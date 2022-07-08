@@ -17,6 +17,7 @@ android {
     targetSdkVersion 31
     generatedDensities = []
     applicationId = "com.brawa.android"
+    multiDexEnabled true
   }
   aaptOptions {
     additionalParameters "--no-version-vectors"

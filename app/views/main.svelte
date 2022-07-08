@@ -109,7 +109,6 @@
     import { user_token, user_profile,logout } from '../store/user'
     import {getStatusbarHeight} from '~/utils/helpers'
     import { onMount,tick } from 'svelte'
-    import { firebase } from "@nativescript/firebase";
     import { client } from '~/lib/client'
     import { Device,Utils,Application,AndroidApplication,Frame } from '@nativescript/core';
     import AlarmPage from './alarm/index.svelte';
@@ -117,10 +116,15 @@
     import Login from './login.svelte';
     import { navigate } from 'svelte-native'
     import { Toasty,ToastDuration } from "@triniwiz/nativescript-toasty"
-    import { crashlytics } from "@nativescript/firebase/crashlytics";
     const permissions = require( "nativescript-permissions" );
     import { createAndroidNotificationChannel } from "../android-notification";
     import { mdi } from '~/utils/icons'
+
+    import { firebase } from '@nativescript/firebase-core';
+    import '@nativescript/firebase-messaging'; // only needs to be imported 1x
+    import '@nativescript/firebase-crashlytics' // only needs to be imported 1x
+    firebase().messaging().showNotificationsWhenInForeground = true;
+    const crashlytics = firebase().crashlytics();
     
 
     let statusBarHeight=0;
@@ -158,7 +162,7 @@
 			Application.android.context.startActivity(Intent);
         } catch (err) {
             console.log({err})
-            crashlytics.sendCrashLog(new java.lang.Exception("error opening app details: "+err));
+            crashlytics.recordError(err)
         }
     }
 
@@ -258,7 +262,7 @@
         }
         try {
             crashlytics.setUserId(""+$user_profile.id);
-            crashlytics.setString("userId", $user_profile.id);
+            crashlytics.setAttribute("userId", String($user_profile.id));
         } catch (err) {
             console.log("error setting userId", err);
         }
@@ -277,25 +281,33 @@
         }
 
         try {
-            await firebase.init({
-                showNotifications: false,
-                showNotificationsWhenInForeground: false,
+            await firebase().messaging().registerDeviceForRemoteMessages();
 
-                onPushTokenReceivedCallback: async (fcmToken) => {
-                    console.log('[Firebase] onPushTokenReceivedCallback:', { fcmToken });
-                    await registerOrUpdateToken(fcmToken);
-                }
-            })
+            firebase().messaging()
+            .getToken()
+            .then(async token => {
+                await registerOrUpdateToken(token);
+            });
+            firebase().messaging().onToken(async token => {
+                await registerOrUpdateToken(token);
+            });
+
+            // firebase()
+            // .messaging()
+            // .onMessage(async (remoteMessage) => {
+            //     console.log(JSON.stringify(remoteMessage));
+            // });
+            
         }catch(error) {
             console.log('[Firebase] Initialize', { error });
             if(error=="Firebase already initialized"){
                 console.log("manually getting token")
-                firebase.getCurrentPushToken().then(async (fcmtoken) => {
+                firebase().messaging().getToken().then(async (fcmtoken) => {
                     console.log('[Firebase] getCurrentPushToken:', { fcmtoken });
                     await registerOrUpdateToken(fcmtoken);
                 });
             }else
-                crashlytics.sendCrashLog(new java.lang.Exception("[Firebase] Initialize failed: "+JSON.stringify(error)));
+                crashlytics.recordError(error)
         }
 
         if(!activityResumedEventListening) {
@@ -329,7 +341,7 @@
                         }
                     } catch (err) {
                         console.log({err})
-                        crashlytics.sendCrashLog(new java.lang.Exception("error navigating to alarm: "+JSON.stringify(err)));
+                        crashlytics.recordError(err)
                     }
             }
         }else{

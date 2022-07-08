@@ -32,22 +32,10 @@
 		<meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/notification_icon" />
 		<meta-data android:name="com.google.firebase.messaging.default_notification_color" android:resource="@color/ns_red" />
 
-		<!-- https://github.com/NativeScript/NativeScript/issues/9659 -->
-		<service android:name="org.nativescript.plugins.firebase.MyFirebaseMessagingService" android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-        <service android:name="org.nativescript.plugins.firebase.MyFirebaseInstanceIDService" android:exported="false" >
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-            </intent-filter>
-        </service>
-
 		<service
 			android:name=".MyFirebaseMessagingService"
 			android:exported="false">
-			<intent-filter android:exported="false">
+			<intent-filter>
 				<action android:name="com.google.firebase.MESSAGING_EVENT"/>
 			</intent-filter>
 		</service>
@@ -64,11 +52,11 @@
 
 			<meta-data android:name="SET_THEME_ON_LAUNCH" android:resource="@style/AppTheme" />
 
-			<intent-filter android:exported="true">
+			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
-			<intent-filter android:exported="true">
+			<intent-filter>
 				<action android:name="OPEN_ACTIVITY_1" />
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>

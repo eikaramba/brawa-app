@@ -13,6 +13,8 @@ module.exports = (env) => {
 	// Learn how to customize:
 	// https://docs.nativescript.org/webpack
 
+	//to fix new firebase issue
+	webpack.mergeWebpack({ resolve: {fallback:{fs:false,path:false}} })
 
 	webpack.Utils.addCopyRule('**/*.svg')
 
