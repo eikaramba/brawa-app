@@ -1,17 +1,20 @@
 // Add your native dependencies here:
 
 // Uncomment to add recyclerview-v7 dependency
-//dependencies {
-//	implementation 'com.android.support:recyclerview-v7:+'
-//}
+
 
 // If you want to add something to be applied before applying plugins' include.gradle files
 // e.g. project.ext.googlePlayServicesVersion = "15.0.1"
 // create a file named before-plugins.gradle in the current directory and place it there
 
+project.compileSdk = 31
+project.targetSdk = 31
+
 android {
+  compileSdkVersion 31
   defaultConfig {
     minSdkVersion 19
+    targetSdkVersion 31
     generatedDensities = []
     applicationId = "com.brawa.android"
   }
@@ -26,7 +29,7 @@ android {
   // }
 }
 
-// dependencies {
-// 	implementation 'androidx.work:work-runtime:2.7.1'
-// 	implementation "androidx.work:work-gcm:2.7.1"
-// }
+dependencies {
+  implementation "com.google.firebase:firebase-iid:21.1.0"
+  implementation "com.google.firebase:firebase-messaging:22.0.0"
+}
