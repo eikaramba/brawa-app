@@ -7,14 +7,14 @@
 // e.g. project.ext.googlePlayServicesVersion = "15.0.1"
 // create a file named before-plugins.gradle in the current directory and place it there
 
-project.compileSdk = 31
-project.targetSdk = 31
+project.compileSdk = 33
+project.targetSdk = 33
 
 android {
-  compileSdkVersion 31
+  compileSdkVersion 33
   defaultConfig {
     minSdkVersion 19
-    targetSdkVersion 31
+    targetSdkVersion 33
     generatedDensities = []
     applicationId = "com.brawa.android"
     multiDexEnabled true
@@ -32,5 +32,5 @@ android {
 
 dependencies {
   implementation "com.google.firebase:firebase-iid:21.1.0"
-  implementation "com.google.firebase:firebase-messaging:22.0.0"
+  implementation "com.google.firebase:firebase-messaging:23.0.8"
 }

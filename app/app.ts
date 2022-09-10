@@ -18,7 +18,10 @@ import {  navigate } from 'svelte-native'
 import { Application, isAndroid, AndroidApplication } from "@nativescript/core";
 import { createAndroidNotificationChannel } from "./android-notification";
 
-
+import { firebase } from '@nativescript/firebase-core';
+import '@nativescript/firebase-messaging'; // only needs to be imported 1x
+import '@nativescript/firebase-crashlytics' // only needs to be imported 1x
+firebase().initializeApp();
 
 if (isAndroid) {
   try {

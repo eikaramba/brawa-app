@@ -155,7 +155,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 			intent.putExtra("templateJson", template);
 			intent.putExtra("alarmId", alarmId);
 
-			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+			int intentFlagType = PendingIntent.FLAG_UPDATE_CURRENT;
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+				intentFlagType = PendingIntent.FLAG_IMMUTABLE;  // or only use FLAG_MUTABLE >> if it needs to be used with inline replies or bubbles.
+			}
+			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, intentFlagType);
 
 			String title=json.getString("notification_titel");
 			String channelName = "AlarmA";
@@ -194,8 +198,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 					
 					am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
 					if(!isHeadsetOn(am)){
-						am.setStreamVolume(AudioManager.STREAM_RING,am.getStreamMaxVolume(AudioManager.STREAM_RING),0);
-						am.setStreamVolume(AudioManager.STREAM_ALARM,am.getStreamMaxVolume(AudioManager.STREAM_ALARM),0);
+						am.setStreamVolume(AudioManager.STREAM_RING,am.getStreamMaxVolume(AudioManager.STREAM_RING)-1,0);
+						am.setStreamVolume(AudioManager.STREAM_ALARM,am.getStreamMaxVolume(AudioManager.STREAM_ALARM)-1,0);
 						changedVolume=true;
 					}
 				}
@@ -239,6 +243,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 					}
 					if((Build.VERSION.SDK_INT < 23 || finalhasDnDPermission) && finalam!=null) {
 						finalam.setStreamVolume(AudioManager.STREAM_RING,finalOldvolume,0);
+						finalam.setStreamVolume(AudioManager.STREAM_ALARM,finalOldvolume,0);
 					}
 				}).start();
 			}

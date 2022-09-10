@@ -110,7 +110,7 @@
     import {getStatusbarHeight} from '~/utils/helpers'
     import { onMount,tick } from 'svelte'
     import { client } from '~/lib/client'
-    import { Device,Utils,Application,AndroidApplication,Frame } from '@nativescript/core';
+    import { Device,Utils,Application,AndroidApplication,isIOS } from '@nativescript/core';
     import AlarmPage from './alarm/index.svelte';
     import ReminderPage from './reminder.svelte';
     import Login from './login.svelte';
@@ -120,9 +120,8 @@
     import { createAndroidNotificationChannel } from "../android-notification";
     import { mdi } from '~/utils/icons'
 
+    // import permissions from "@master.technology/permissions";
     import { firebase } from '@nativescript/firebase-core';
-    import '@nativescript/firebase-messaging'; // only needs to be imported 1x
-    import '@nativescript/firebase-crashlytics' // only needs to be imported 1x
     firebase().messaging().showNotificationsWhenInForeground = true;
     const crashlytics = firebase().crashlytics();
     
@@ -268,8 +267,7 @@
         }
 
         try {
-            var activity = Application.android.foregroundActivity || Application.android.startActivity  
-            console.log("created");
+            var activity = Application.android.foregroundActivity || Application.android.startActivity
             /*
               you should be able to use them just fine; but need a full understanding of the NativeScript UI lifecycle
               Frame and Page in particular are pretty weird components
@@ -281,23 +279,39 @@
         }
 
         try {
-            await firebase().messaging().registerDeviceForRemoteMessages();
+            let enabled = false;
+            if (isIOS || android.os.Build.VERSION.SDK_INT >= 33) {
+                try {
+                    await permissions.requestPermission(android.Manifest.permission.POST_NOTIFICATIONS, "Für Push Benachrichtigungen benötigt");
+                    // await permissions.requestPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                    enabled = true;
+                }catch(error) {
+                    console.log(error);
+                    const toast = new Toasty({ text: `Bitte Berechtigung für Benachrichtigungen erteilen` }).setToastDuration(ToastDuration.LONG);
+                    toast.show();
+                }
+            }else{
+                enabled = true;
+            }
+            if (enabled) {
+                await firebase().messaging().registerDeviceForRemoteMessages();
 
-            firebase().messaging()
-            .getToken()
-            .then(async token => {
-                await registerOrUpdateToken(token);
-            });
-            firebase().messaging().onToken(async token => {
-                await registerOrUpdateToken(token);
-            });
+                firebase().messaging()
+                .getToken()
+                .then(async token => {
+                    await registerOrUpdateToken(token);
+                });
+                firebase().messaging().onToken(async token => {
+                    await registerOrUpdateToken(token);
+                });
 
-            // firebase()
-            // .messaging()
-            // .onMessage(async (remoteMessage) => {
-            //     console.log(JSON.stringify(remoteMessage));
-            // });
+                // firebase()
+                // .messaging()
+                // .onMessage(async (remoteMessage) => {
+                //     console.log(JSON.stringify(remoteMessage));
+                // });
             
+            }
         }catch(error) {
             console.log('[Firebase] Initialize', { error });
             if(error=="Firebase already initialized"){
@@ -376,7 +390,6 @@
         
         if (global.isAndroid && Device.sdkVersion >= '28') {
             try {
-                const context = Utils.ad.getApplicationContext();
                 const activityManager = context.getSystemService(android.content.Context.ACTIVITY_SERVICE);
                 isBackgroundRestricted = activityManager.isBackgroundRestricted();
             } catch (err) {
