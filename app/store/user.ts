@@ -42,6 +42,10 @@ function buildUserProfileStore() {
 export const user_profile = buildUserProfileStore();
 
 export function logout() {
+    let user=get(user_profile);
+    client.put(`/users/${user.id}`,{
+        fcmToken:""
+    });
     user_profile.set(null);
     user_token.set(null);
     clearCookies();
