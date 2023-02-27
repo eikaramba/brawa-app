@@ -109,7 +109,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 	
 		Request request = new Request.Builder()
 		// .url("http://192.168.178.58:1337/alarms/" + alarmId)   //URL
-		.url("https://app.eikaramba.de/brawa/api/alarms/" + alarmId)   //URL
+		.url("https://brawa-backend.at.projects.creatness.studio/alarms/" + alarmId)   //URL
 		.put(body)
 		.build();
 		
