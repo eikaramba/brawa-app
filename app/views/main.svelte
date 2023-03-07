@@ -239,6 +239,9 @@
         }
 
     }
+    function timeout(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
 
     onMount(async ()=>{
         helpLink = generateDKMALink();
@@ -346,6 +349,7 @@
                 activity.getIntent().removeExtra("alarmId"); 
                 activity.getIntent().removeExtra("templateJson"); 
                 const template = JSON.parse(templateJson);
+                await timeout(100);
                 await tick(); // see https://github.com/halfnelson/svelte-native/issues/82
                     try {
                         if(template.reminder) {
@@ -353,9 +357,19 @@
                         }else{
                             navigate({ page: AlarmPage,props:{id:alarmId,template} });
                         }
-                    } catch (err) {
-                        console.log({err})
-                        crashlytics.recordError(err)
+                    } catch (err1) {
+                        console.log({err1})
+                        await timeout(3000);
+                        try {
+                            if(template.reminder) {
+                                navigate({ page: ReminderPage,props:{id:alarmId,template} });
+                            }else{
+                                navigate({ page: AlarmPage,props:{id:alarmId,template} });
+                            }
+                        } catch (err2) {
+                            console.log({err2})
+                            crashlytics.recordError(err2)
+                        }
                     }
             }
         }else{
