@@ -81,6 +81,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 		sendNotification(alarmId, template);
 
+		wakeLock.release();
+
 	}
 
 	private void setReceivedTime(int alarmId) {
@@ -157,7 +159,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 			int intentFlagType = PendingIntent.FLAG_UPDATE_CURRENT;
 			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-				intentFlagType = PendingIntent.FLAG_IMMUTABLE;  // or only use FLAG_MUTABLE >> if it needs to be used with inline replies or bubbles.
+				intentFlagType = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;  // or only use FLAG_MUTABLE >> if it needs to be used with inline replies or bubbles.
 			}
 			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, intentFlagType);
 
