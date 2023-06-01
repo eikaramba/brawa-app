@@ -87,6 +87,8 @@ registerNativeViewElement("svgview", () => require('@nativescript-community/ui-s
 
 Theme.setMode(Theme.Light);
 
+
+
 // svelteNative(AlarmPage as typeof SvelteComponent, {
 
 //     id:60,

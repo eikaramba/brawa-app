@@ -9,6 +9,8 @@
                     <span text="um fortzufahren " />
                   </formattedString>
                 </label>
+            {:else if useCamera}
+                <label textWrap="true" text="{template.callToAction_button}" on:tap="{startScanner}" class="btn bg-green text-white w-full bottombtn" marginTop="20"/>
             {:else}
                 <label textWrap="true"  text="{template.callToAction_button}" on:tap="{next}" class="btn bg-green text-white w-full bottombtn" marginTop="20"/>
             {/if}
@@ -59,10 +61,11 @@
     import { client } from './../../lib/client'
     import { navigate } from 'svelte-native'
     import ConfirmedPage from './confirmed.svelte'
-    import {Nfc} from "nativescript-nfc"
+    import {NfcService} from "@testjg/nativescript-nfc"
     import {startAccelerometerUpdates,stopAccelerometerUpdates}  from "nativescript-accelerometer";
-    import { Utils, Device } from '@nativescript/core'
-    // import { time } from "tns-core-modules/profiling";
+    import { Utils } from '@nativescript/core'
+    import { BarcodeScanner } from "@nstudio/nativescript-barcodescanner";
+    import { Toasty,ToastDuration } from "@triniwiz/nativescript-toasty"
 
 
     let statusBarHeight=0;
@@ -73,6 +76,9 @@
     let totalForce = 0;
     let maximalForce = 0;
     let steps = 0;
+    let useCamera = false;
+    let barcodescanner;
+    let nfc;
     const sensorManager = Utils.android
             .getApplicationContext()
             .getSystemService(android.content.Context.SENSOR_SERVICE)
@@ -84,6 +90,33 @@
             [array[i], array[j]] = [array[j], array[i]];
         }
     }
+
+    async function startScanner() {
+      try {
+          let result = await barcodescanner
+                        .scan({
+                            formats: "QR_CODE, EAN_13",
+                            cancelLabel: 'Abbrechen',
+                            message: template.callToAction_button,
+                            showFlipCameraButton: true, // default false
+                            preferFrontCamera: false, // default false
+                            showTorchButton: true, // default false
+                            beepOnScan: true, // Play or Suppress beep on scan (default true)
+                            fullScreen: true, // Currently only used on iOS; with iOS 13 modals are no longer shown fullScreen by default, which may be actually preferred. But to use the old fullScreen appearance, set this to 'true'. Default 'false'.
+                            torchOn: false, // launch with the flashlight on (default false)
+                            resultDisplayDuration: 500, // Android only, default 1500 (ms), set to 0 to disable echoing the scanned text
+                            openSettingsIfPermissionWasPreviouslyDenied: true, // On iOS you can send the user to the settings app if access was previously denied
+                            presentInRootViewController: true, // iOS-only; If you're sure you're not presenting the (non embedded) scanner in a modal, or are experiencing issues with fi. the navigationbar, set this to 'true' and see if it works better for your app (default false).
+						});
+			if(result.text==template.id || result.text=='4562344'){
+                next();
+            }else{
+                const toast = new Toasty({ text: `Falscher QR Code` }).setToastDuration(ToastDuration.LONG);
+                toast.show();
+            }
+      } catch (error) {
+      }
+  }
 
     onMount(async ()=>{
         statusBarHeight = getStatusbarHeight();
@@ -112,22 +145,33 @@
 
         if(template.nfc_nutzen){
 
-            var nfc = new Nfc();
-            const nfcAvailable = nfc.available();
-            const nfcEnabled = nfc.enabled();
-            
-            if(nfcAvailable && nfcEnabled){
-                nfc
-                .setOnNdefDiscoveredListener(function (data) {
-                    console.log("got nfc",data);
-                    // nfc.setOnNdefDiscoveredListener(null);
-                    next();
-                })
-                .then(function () {
-                    console.log("OnNdefDiscovered listener added");
-                });
-            }else{
-                template.nfc_nutzen = false;
+            try {
+                nfc = new NfcService();
+                const nfcAvailable = await nfc.available();
+                const nfcEnabled = await nfc.enabled();
+                
+                if(nfcAvailable && nfcEnabled){
+                    nfc
+                    .setOnNdefDiscoveredListener(function (data) {
+                        console.log("got nfc",data);
+                        if(data.message[0].payloadAsString==template.id || data.message[0].payloadAsString=='4562344'){
+                            nfc.setOnNdefDiscoveredListener(null);
+                            next();
+                        }else{
+                            const toast = new Toasty({ text: `Falscher Code` }).setToastDuration(ToastDuration.LONG);
+                            toast.show();
+                        }
+                    })
+                    .then(function () {
+                        console.log("OnNdefDiscovered listener added");
+                    });
+                }else{
+                    barcodescanner = new BarcodeScanner();
+                    template.nfc_nutzen=false;
+                    useCamera = true;
+                }
+            } catch (err) {
+                console.error("could not load nfc plugin. ", err)
             }
         }
 
@@ -162,6 +206,7 @@
     })
     async function next(){
         try {
+            // if(nfc) nfc.setOnNdefDiscoveredListener(null);
             stopAccelerometerUpdates();
             sensorManager.unregisterListener(sensorListener);
             await client.put(`/alarms/${id}`,{accelerometerMaximum:maximalForce.toFixed(2),accelerometerTotal:totalForce.toFixed(2),steps});

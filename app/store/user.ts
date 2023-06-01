@@ -24,14 +24,17 @@ export const user_token = buildUserTokenStore();
 
 
 function buildUserProfileStore() {
-    const user_profile = writable(null)
+    const user_profile = writable({})
 
     return {
         subscribe: user_profile.subscribe,
+        update: user_profile.update,
 
         async loadUserFromToken() {
-            if (!get(user_token)) return null;
+            if (!get(user_token)) return {};
             const userResponse = await client.get<any>('/users/me');
+            console.log(userResponse)
+            userResponse.points = userResponse.points || 0;
             user_profile.set(userResponse);
         },
 

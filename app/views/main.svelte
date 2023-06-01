@@ -94,6 +94,25 @@
                 <label textWrap="true" class="text-sm mb-4 italic" text="Aus technischen Gründen bleibt diese Anweisung auch nach der Erteilung der Berechtigungen stehen. Dadurch ist die Funktionsweise der App nicht zwangsläufig  beeinträchtigt!" />
                     
                 {/if}
+
+                {#if $user_profile.points>0}
+                <stackLayout orientation="vertical" class="bg-gray-200 p-4 text-center">
+                    <label textWrap="true" class="text-md">
+                        <formattedString>
+                            <span text="Dein aktueller Punktestand: " />
+                            <span text="{$user_profile.points}" fontWeight="bold" />
+                        </formattedString>
+                    </label>
+                    <label textWrap="true" class="text-md" text="Du hast Level {level} erreicht!" />
+                    <flexboxLayout alignItems="center">
+                        <svgview src="~/images/badge1{level<1?'_disabled':''}.svg" width="100%" height="46" margin="0 0 0 0" />
+                        <svgview src="~/images/badge2{level<2?'_disabled':''}.svg" width="100%" height="46" margin="0 0 0 0" />
+                        <svgview src="~/images/badge3{level<3?'_disabled':''}.svg" width="100%" height="46" margin="0 0 0 0" />
+                        <svgview src="~/images/badge4{level<4?'_disabled':''}.svg" width="100%" height="46" margin="0 0 0 0" />
+                        <svgview src="~/images/badge5{level<5?'_disabled':''}.svg" width="100%" height="46" margin="0 0 0 0" />
+                    </flexboxLayout>
+                </stackLayout>
+                {/if}
             
                 <label textWrap="true" class="text-xl font-medium mt-6" text="Testalarm anhören" />
                 <label textWrap="true" class="mt-4 text-md " text="Um sicherzugehen, dass alles funktioniert und um den Alarm einmal anzuhören, können Sie sich selbst einen Alarm per Knopfdruck erstellen lassen." />
@@ -125,7 +144,7 @@
     firebase().messaging().showNotificationsWhenInForeground = true;
     const crashlytics = firebase().crashlytics();
     
-
+    $: level = $user_profile.points/100;
     let statusBarHeight=0;
     let setupTabOpen=-1;
     let permissionsGranted=false;
@@ -252,12 +271,12 @@
         }
         statusBarHeight = getStatusbarHeight();
         console.log("starting app with ", $user_profile, $user_token);
-        if (!$user_profile) {
+        if (!$user_profile || $user_profile?.id == null) {
             console.log("load user profile");
             try {
                 await user_profile.loadUserFromToken();
             } catch (err) {}
-            if (!$user_profile) {
+            if (!$user_profile || $user_profile?.id == null) {
                 return doLogout();
             }
             console.log("profile loaded from server:", $user_profile);
@@ -332,6 +351,9 @@
             AndroidApplication.activityResumedEvent,
             (args) => {
                 console.log("resumed");
+                try {
+                    user_profile.loadUserFromToken();
+                } catch (err) {}
                 handleAlarmsAndPermissions(args.activity)
             }
             );

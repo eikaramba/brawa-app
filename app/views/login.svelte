@@ -78,8 +78,10 @@
          page.android.setFitsSystemWindows(true);
        }
     }
-    onMount(()=> {
-        if ($user_profile) {
+    onMount(async ()=> {
+        if ($user_profile?.id) {
+            await timeout(100);
+            await tick();
             navigate(
                 { page: Home, clearHistory: true }
             );
