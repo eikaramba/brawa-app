@@ -49,7 +49,7 @@ export function logout() {
     client.put(`/users/${user.id}`,{
         fcmToken:""
     });
-    user_profile.set(null);
+    user_profile.set({});
     user_token.set(null);
     clearCookies();
 }
