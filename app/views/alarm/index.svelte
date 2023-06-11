@@ -10,7 +10,12 @@
                   </formattedString>
                 </label>
             {:else if useCamera}
-                <label textWrap="true" text="{template.callToAction_button}" on:tap="{startScanner}" class="btn bg-green text-white w-full bottombtn" marginTop="20"/>
+                <label textWrap="true" class="text-lg bg-green text-white w-full bottombtn" on:tap="{startScanner}">
+                <formattedString>
+                    <span text="QR Code scannen " fontWeight="900" />
+                    <span text="um fortzufahren " />
+                    </formattedString>
+                </label>
             {:else}
                 <label textWrap="true"  text="{template.callToAction_button}" on:tap="{next}" class="btn bg-green text-white w-full bottombtn" marginTop="20"/>
             {/if}
