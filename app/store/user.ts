@@ -33,7 +33,6 @@ function buildUserProfileStore() {
         async loadUserFromToken() {
             if (!get(user_token)) return {};
             const userResponse = await client.get<any>('/users/me');
-            console.log(userResponse)
             userResponse.points = userResponse.points || 0;
             user_profile.set(userResponse);
         },
@@ -46,7 +45,7 @@ export const user_profile = buildUserProfileStore();
 
 export function logout() {
     let user=get(user_profile);
-    client.put(`/users/${user.id}`,{
+    client.put(`/users/${(user as { id: string }).id}`,{
         fcmToken:""
     });
     user_profile.set({});
