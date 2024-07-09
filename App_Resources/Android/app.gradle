@@ -7,14 +7,14 @@
 // e.g. project.ext.googlePlayServicesVersion = "15.0.1"
 // create a file named before-plugins.gradle in the current directory and place it there
 
-project.compileSdk = 33
-project.targetSdk = 33
+project.compileSdk = 34
+project.targetSdk = 34
 
 android {
-  compileSdkVersion 33
+  compileSdkVersion 34
   defaultConfig {
     minSdkVersion 19
-    targetSdkVersion 33
+    targetSdkVersion 34
     generatedDensities = []
     applicationId = "com.brawa.android"
     multiDexEnabled true

@@ -2,7 +2,10 @@ const plugin = require('tailwindcss/plugin')
 const colors = require('tailwindcss/colors')
 module.exports = {
   purge: [],
-  darkMode: false, // or 'media' or 'class'
+  content: [
+    './app/**/*.{css,xml,html,vue,svelte,ts,tsx}'
+  ],
+  darkMode: false,
   theme: {
     fontSize: {
       xs: ['12', '3'],
@@ -49,5 +52,8 @@ module.exports = {
         })
       })
     })
-  ]
+  ],
+  corePlugins: {
+    preflight: false // disables browser-specific resets
+  }
 }
