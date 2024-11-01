@@ -202,7 +202,7 @@
         // <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
         let Intent = new android.content.Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
         Intent.setFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
-        Application.android.context.startActivity(Intent);
+        Utils.android.getApplicationContext().startActivity(Intent);
         //TODO: Use manager.isNotificationPolicyAccessGranted()
         // then https://developer.android.com/reference/android/app/NotificationManager.html#setInterruptionFilter(int)
     }
@@ -315,6 +315,7 @@
             }else{
                 enabled = true;
             }
+            console.log("fcm enabled", enabled);
             if (enabled) {
                 await firebase().messaging().registerDeviceForRemoteMessages();
 
@@ -348,7 +349,7 @@
 
         if(!activityResumedEventListening) {
             Application.android.on(
-            AndroidApplication.activityResumedEvent,
+            Application.android.activityResumedEvent,
             (args) => {
                 console.log("resumed");
                 try {
@@ -415,7 +416,7 @@
     }
 
     function checkPermissions(){
-        const context = Utils.ad.getApplicationContext();
+        const context = Utils.android.getApplicationContext();
         const manager = context.getSystemService(
             android.app.NotificationManager.class
         );

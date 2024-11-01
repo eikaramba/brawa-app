@@ -52,10 +52,6 @@
         font-size:18;
     }
 
-    .sign-up-label {
-        padding: 10 10 32 10;
-    }
-
 </style>
 
 <script>

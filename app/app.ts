@@ -22,11 +22,12 @@ import { firebase } from '@nativescript/firebase-core';
 import '@nativescript/firebase-messaging'; // only needs to be imported 1x
 import '@nativescript/firebase-crashlytics' // only needs to be imported 1x
 firebase().initializeApp();
+firebase().messaging();
 
 if (isAndroid) {
   try {
     Application.android.on(
-      AndroidApplication.activityCreatedEvent,
+      Application.android.activityCreatedEvent,
       (args: any) => {
         createAndroidNotificationChannel({
           id: "AlarmA",
@@ -60,7 +61,7 @@ if (isAndroid) {
     // });
     // Activity Started (app started/booted)
     // Application.android.on(
-    //   AndroidApplication.activityResumedEvent,
+    //   Application.android.activityResumedEvent,
     //   (args: any) => {
     //     if (args.activity) {
     //       let extras = args.activity.getIntent().getExtras();
@@ -69,9 +70,9 @@ if (isAndroid) {
     //         let id = JSON.parse(extras.getString("id"));
     //         let template = JSON.parse(extras.getString("template"));
     //         console.log("id is " + id);
-    //         navigate(
-    //                           { page: AlarmPage, props:{id,template} }
-    //                       )
+    //         // navigate(
+    //         //                   { page: AlarmPage, props:{id,template} }
+    //         //               )
     //       }
     //     }
     //     console.log("Event: " + args.eventName + ", Activity: " + args.activity);

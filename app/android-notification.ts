@@ -3,8 +3,8 @@ import { isAndroid, Utils } from "@nativescript/core";
 export function getResource(
   name: string,
   folder?: string
-): { id: string; uri: android.net.Uri } {
-  const context = Utils.ad.getApplicationContext();
+): { id: number; uri: android.net.Uri } {
+  const context = Utils.android.getApplicationContext();
   const packageName = context.getPackageName();
   const id = context
     .getResources()
@@ -54,7 +54,7 @@ export function createAndroidNotificationChannel(channel: {
         audioAttributes
       );
     }
-    const context = Utils.ad.getApplicationContext();
+    const context = Utils.android.getApplicationContext();
     const notificationManager = context.getSystemService(
       android.app.NotificationManager.class
     );

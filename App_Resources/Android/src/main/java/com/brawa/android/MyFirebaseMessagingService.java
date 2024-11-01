@@ -64,9 +64,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 	@Override
 	public void onMessageReceived(RemoteMessage remoteMessage) {
+		Log.d("FCM", "onMessageReceived");
 		super.onMessageReceived(remoteMessage);
 		Map<String, String> data = remoteMessage.getData();
 
+		Log.d("alarmId from notification object", data.get("id").toString());
 		int alarmId=Integer.parseInt(data.get("id").toString());
 		String template=data.get("template").toString();
 

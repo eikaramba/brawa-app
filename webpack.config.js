@@ -85,6 +85,7 @@ module.exports = (env) => {
 	// +       'postcss-loader'
 	// 	],
 	// }
+	webpack.mergeWebpack({ resolve: {conditionNames:['svelte','require','node'] }})
 	  
 
 	return webpack.resolveConfig();

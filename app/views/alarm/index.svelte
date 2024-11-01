@@ -67,7 +67,7 @@
     import { navigate } from 'svelte-native'
     import ConfirmedPage from './confirmed.svelte'
     import {NfcService} from "@testjg/nativescript-nfc"
-    import {startAccelerometerUpdates,stopAccelerometerUpdates}  from "nativescript-accelerometer";
+    import {startAccelerometerUpdates,stopAccelerometerUpdates}  from "@triniwiz/nativescript-accelerometer";
     import { Utils } from '@nativescript/core'
     import { BarcodeScanner } from "@nstudio/nativescript-barcodescanner";
     import { Toasty,ToastDuration } from "@triniwiz/nativescript-toasty"
